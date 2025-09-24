@@ -22,11 +22,9 @@ public class VehiculeDAO {
      * Ajoute un nouveau véhicule
      */
     public boolean ajouterVehicule(Vehicule vehicule) {
-        String sql = """
-            INSERT INTO vehicule (matricule, marque, type, annee, disponible, 
-                                date_assurance, date_vidange, date_visite_technique)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """;
+        String sql = "INSERT INTO vehicule (matricule, marque, type, annee, disponible, " +
+                    "date_assurance, date_vidange, date_visite_technique) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -138,12 +136,10 @@ public class VehiculeDAO {
      * Met à jour un véhicule
      */
     public boolean modifierVehicule(Vehicule vehicule) {
-        String sql = """
-            UPDATE vehicule SET matricule = ?, marque = ?, type = ?, annee = ?, 
-                              disponible = ?, date_assurance = ?, date_vidange = ?, 
-                              date_visite_technique = ?
-            WHERE id = ?
-            """;
+        String sql = "UPDATE vehicule SET matricule = ?, marque = ?, type = ?, annee = ?, " +
+                    "disponible = ?, date_assurance = ?, date_vidange = ?, " +
+                    "date_visite_technique = ? " +
+                    "WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -226,11 +222,9 @@ public class VehiculeDAO {
      */
     public List<Vehicule> rechercherVehicules(String critere) {
         List<Vehicule> vehicules = new ArrayList<>();
-        String sql = """
-            SELECT * FROM vehicule 
-            WHERE matricule LIKE ? OR marque LIKE ? OR type LIKE ?
-            ORDER BY matricule
-            """;
+        String sql = "SELECT * FROM vehicule " +
+                    "WHERE matricule LIKE ? OR marque LIKE ? OR type LIKE ? " +
+                    "ORDER BY matricule";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -288,13 +282,11 @@ public class VehiculeDAO {
      * Obtient les statistiques des véhicules
      */
     public VehiculeStats getStatistiques() {
-        String sql = """
-            SELECT 
-                COUNT(*) as total,
-                SUM(CASE WHEN disponible = TRUE THEN 1 ELSE 0 END) as disponibles,
-                SUM(CASE WHEN disponible = FALSE THEN 1 ELSE 0 END) as affectes
-            FROM vehicule
-            """;
+        String sql = "SELECT " +
+                    "COUNT(*) as total, " +
+                    "SUM(CASE WHEN disponible = TRUE THEN 1 ELSE 0 END) as disponibles, " +
+                    "SUM(CASE WHEN disponible = FALSE THEN 1 ELSE 0 END) as affectes " +
+                    "FROM vehicule";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);

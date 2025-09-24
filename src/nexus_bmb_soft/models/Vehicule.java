@@ -14,7 +14,7 @@ public class Vehicule {
     private String matricule;
     private String marque;
     private String type;
-    private int annee;
+    private Integer annee;
     private boolean disponible;
     private LocalDate dateAssurance;
     private LocalDate dateVidange;
@@ -25,7 +25,7 @@ public class Vehicule {
         this.disponible = true; // Par défaut, un véhicule est disponible
     }
     
-    public Vehicule(String matricule, String marque, String type, int annee) {
+    public Vehicule(String matricule, String marque, String type, Integer annee) {
         this();
         this.matricule = matricule;
         this.marque = marque;
@@ -33,7 +33,7 @@ public class Vehicule {
         this.annee = annee;
     }
     
-    public Vehicule(int id, String matricule, String marque, String type, int annee, 
+    public Vehicule(int id, String matricule, String marque, String type, Integer annee, 
                    boolean disponible, LocalDate dateAssurance, LocalDate dateVidange, 
                    LocalDate dateVisiteTechnique) {
         this.id = id;
@@ -80,11 +80,11 @@ public class Vehicule {
         this.type = type;
     }
     
-    public int getAnnee() {
+    public Integer getAnnee() {
         return annee;
     }
     
-    public void setAnnee(int annee) {
+    public void setAnnee(Integer annee) {
         this.annee = annee;
     }
     

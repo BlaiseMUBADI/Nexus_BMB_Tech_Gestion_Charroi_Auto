@@ -20,6 +20,8 @@ import nexus_bmb_soft.application.form.other.FormDashboard;
 import nexus_bmb_soft.application.form.other.FormInbox;
 import nexus_bmb_soft.application.form.other.FormRead;
 import nexus_bmb_soft.application.form.other.FormParcAutomobile;
+import nexus_bmb_soft.application.form.other.FormAjoutVehicule;
+import nexus_bmb_soft.application.form.other.FormListeVehicules;
 import nexus_bmb_soft.application.form.other.FormAffectations;
 import nexus_bmb_soft.application.form.other.FormEntretien;
 import nexus_bmb_soft.application.form.other.DefaultForm;
@@ -84,8 +86,14 @@ public class MainForm extends JLayeredPane {
             } else if (index == 1) { // GESTION VÉHICULES - Parc Automobile
                 if (subIndex == 0) {
                     Application.showForm(new FormParcAutomobile());
+                } else if (subIndex == 1) {
+                    // Sous-menu "Ajouter Véhicule"
+                    Application.showForm(new FormAjoutVehicule());
+                } else if (subIndex == 2) {
+                    // Sous-menu "Liste Véhicules"
+                    Application.showForm(new FormListeVehicules());
                 } else {
-                    // Sous-menus du parc automobile (à implémenter plus tard)
+                    // Autres sous-menus (à implémenter plus tard)
                     Application.showForm(new DefaultForm("Parc Auto - Sous-menu " + subIndex));
                 }
             } else if (index == 2) { // OPÉRATIONS - Affectations

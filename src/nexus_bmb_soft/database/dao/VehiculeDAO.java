@@ -32,7 +32,14 @@ public class VehiculeDAO {
             pstmt.setString(1, vehicule.getMatricule());
             pstmt.setString(2, vehicule.getMarque());
             pstmt.setString(3, vehicule.getType());
-            pstmt.setInt(4, vehicule.getAnnee());
+            
+            // Gestion de l'année nullable
+            if (vehicule.getAnnee() != null) {
+                pstmt.setInt(4, vehicule.getAnnee());
+            } else {
+                pstmt.setNull(4, java.sql.Types.INTEGER);
+            }
+            
             pstmt.setBoolean(5, vehicule.isDisponible());
             
             // Gestion des dates nulles
@@ -147,7 +154,14 @@ public class VehiculeDAO {
             pstmt.setString(1, vehicule.getMatricule());
             pstmt.setString(2, vehicule.getMarque());
             pstmt.setString(3, vehicule.getType());
-            pstmt.setInt(4, vehicule.getAnnee());
+            
+            // Gestion de l'année nullable
+            if (vehicule.getAnnee() != null) {
+                pstmt.setInt(4, vehicule.getAnnee());
+            } else {
+                pstmt.setNull(4, java.sql.Types.INTEGER);
+            }
+            
             pstmt.setBoolean(5, vehicule.isDisponible());
             
             pstmt.setDate(6, vehicule.getDateAssurance() != null ? 
@@ -193,6 +207,28 @@ public class VehiculeDAO {
             LOGGER.log(Level.SEVERE, "❌ Erreur lors de la suppression du véhicule ID: " + id, e);
         }
         return false;
+    }
+    
+    /**
+     * Récupère tous les véhicules
+     */
+    public List<Vehicule> obtenirTousVehicules() {
+        List<Vehicule> vehicules = new ArrayList<>();
+        String sql = "SELECT * FROM vehicule ORDER BY matricule";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                vehicules.add(mapResultSetToVehicule(rs));
+            }
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors de la récupération de tous les véhicules", e);
+        }
+        
+        return vehicules;
     }
     
     /**
@@ -256,7 +292,13 @@ public class VehiculeDAO {
         vehicule.setMatricule(rs.getString("matricule"));
         vehicule.setMarque(rs.getString("marque"));
         vehicule.setType(rs.getString("type"));
-        vehicule.setAnnee(rs.getInt("annee"));
+        
+        // Gestion de l'année nullable
+        int annee = rs.getInt("annee");
+        if (!rs.wasNull()) {
+            vehicule.setAnnee(annee);
+        }
+        
         vehicule.setDisponible(rs.getBoolean("disponible"));
         
         // Gestion des dates nulles

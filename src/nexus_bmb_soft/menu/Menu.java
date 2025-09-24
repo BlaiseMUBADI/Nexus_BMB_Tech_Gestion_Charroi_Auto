@@ -28,7 +28,7 @@ public class Menu extends JPanel {
         {"~TABLEAU DE BORD~"},
         {"Dashboard", "Vue d'ensemble", "Statistiques", "Alertes"},
         {"~GESTION VÉHICULES~"},
-        {"Parc Automobile", "Ajouter Véhicule", "Liste Véhicules", "Recherche/Filtres", "États/Disponibilité"},
+        {"Parc Automobile", "Gestion Véhicules", "Recherche/Filtres", "États/Disponibilité"},
         {"~OPÉRATIONS~"},
         {"Affectations", "Nouvelle Affectation", "Affectations Actives", "Historique", "Recherche par Conducteur"},
         {"Entretien & Maintenance", "Programmer Entretien", "Historique Maintenance", "Alertes Échéances"},

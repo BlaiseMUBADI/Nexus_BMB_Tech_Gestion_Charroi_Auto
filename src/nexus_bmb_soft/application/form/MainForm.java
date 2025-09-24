@@ -86,8 +86,8 @@ public class MainForm extends JLayeredPane {
                 if (subIndex == 0) {
                     // Menu principal : Interface unifiée de gestion des véhicules
                     Application.showForm(new FormGestionVehicules());
-                } else if (subIndex == 1 || subIndex == 2) {
-                    // Sous-menus "Ajouter Véhicule" et "Liste Véhicules" : Interface unifiée
+                } else if (subIndex == 1) {
+                    // Sous-menu "Gestion Véhicules" : Interface unifiée
                     Application.showForm(new FormGestionVehicules());
                 } else {
                     // Autres sous-menus (à implémenter plus tard)

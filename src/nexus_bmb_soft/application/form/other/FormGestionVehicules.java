@@ -118,7 +118,7 @@ public class FormGestionVehicules extends JPanel {
         gbc.gridx = 0; gbc.gridy = row;
         JLabel lblMatricule = new JLabel("🚗 Matricule :");
         lblMatricule.setFont(lblMatricule.getFont().deriveFont(Font.BOLD));
-        panel.add(lblMatricule, gbc);
+        panelSaisie.add(lblMatricule, gbc);
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
         txtMatricule = new JTextField(20);
         txtMatricule.setBorder(BorderFactory.createCompoundBorder(

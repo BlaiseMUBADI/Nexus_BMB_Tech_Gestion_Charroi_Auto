@@ -2,6 +2,7 @@ package nexus_bmb_soft.application.form.other;
 
 import nexus_bmb_soft.database.dao.VehiculeDAO;
 import nexus_bmb_soft.models.Vehicule;
+import nexus_bmb_soft.utils.IconUtils;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -82,11 +83,11 @@ public class FormGestionVehicules extends JPanel {
         
         // Onglet 1: Ajouter véhicule
         JPanel panelAjout = createAjoutPanel();
-        tabbedPane.addTab("➕ Ajouter Véhicule", null, panelAjout);
+        tabbedPane.addTab(" Ajouter Véhicule", IconUtils.createAddIcon(new Color(52, 152, 219), 16), panelAjout);
         
         // Onglet 2: Liste véhicules
         JPanel panelListe = createListePanel();
-        tabbedPane.addTab("📋 Liste Véhicules", null, panelListe);
+        tabbedPane.addTab(" Liste Véhicules", IconUtils.createListIcon(new Color(46, 204, 113), 16), panelListe);
         
         // Changer d'onglet automatiquement après ajout
         tabbedPane.addChangeListener(e -> {
@@ -116,7 +117,7 @@ public class FormGestionVehicules extends JPanel {
         
         // Matricule (obligatoire)
         gbc.gridx = 0; gbc.gridy = row;
-        JLabel lblMatricule = new JLabel("🚗 Matricule :");
+        JLabel lblMatricule = new JLabel(" Matricule :", IconUtils.createCarIcon(new Color(52, 73, 94), 16), JLabel.LEFT);
         lblMatricule.setFont(lblMatricule.getFont().deriveFont(Font.BOLD));
         panelSaisie.add(lblMatricule, gbc);
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
@@ -185,7 +186,7 @@ public class FormGestionVehicules extends JPanel {
         
         // Date assurance
         gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 1; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0.0;
-        panelSaisie.add(new JLabel("🛡️ Assurance :"), gbc);
+        panelSaisie.add(new JLabel(" Assurance :", IconUtils.createCalendarIcon(new Color(231, 76, 60), 16), JLabel.LEFT), gbc);
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
         
         // Créer JSpinner avec SpinnerDateModel
@@ -202,7 +203,7 @@ public class FormGestionVehicules extends JPanel {
         
         // Date vidange
         gbc.gridx = 0; gbc.gridy = row; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0.0;
-        panelSaisie.add(new JLabel("🔧 Vidange :"), gbc);
+        panelSaisie.add(new JLabel(" Vidange :", IconUtils.createCalendarIcon(new Color(142, 68, 173), 16), JLabel.LEFT), gbc);
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
         
         // Créer JSpinner avec SpinnerDateModel pour vidange
@@ -219,7 +220,7 @@ public class FormGestionVehicules extends JPanel {
         
         // Date visite technique
         gbc.gridx = 0; gbc.gridy = row; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0.0;
-        panelSaisie.add(new JLabel("🔍 Visite Technique :"), gbc);
+        panelSaisie.add(new JLabel(" Visite Technique :", IconUtils.createCalendarIcon(new Color(52, 152, 219), 16), JLabel.LEFT), gbc);
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
         
         // Créer JSpinner avec SpinnerDateModel pour visite technique
@@ -238,14 +239,14 @@ public class FormGestionVehicules extends JPanel {
         JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
         panelBoutons.setBorder(BorderFactory.createTitledBorder("Actions"));
         
-        btnReinitialiser = new JButton("🔄 Réinitialiser");
+        btnReinitialiser = new JButton(" Réinitialiser", IconUtils.createRefreshIcon(Color.WHITE, 16));
         btnReinitialiser.setPreferredSize(new Dimension(150, 35));
         btnReinitialiser.setBackground(new Color(255, 165, 0));
         btnReinitialiser.setForeground(Color.WHITE);
         btnReinitialiser.setFont(btnReinitialiser.getFont().deriveFont(Font.BOLD));
         btnReinitialiser.addActionListener(e -> reinitialiserFormulaire());
         
-        btnSauvegarder = new JButton("💾 Sauvegarder");
+        btnSauvegarder = new JButton(" Sauvegarder", IconUtils.createSaveIcon(Color.WHITE, 16));
         btnSauvegarder.setPreferredSize(new Dimension(150, 35));
         btnSauvegarder.setBackground(new Color(34, 139, 34));
         btnSauvegarder.setForeground(Color.WHITE);

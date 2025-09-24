@@ -22,6 +22,7 @@ import nexus_bmb_soft.application.form.other.FormRead;
 import nexus_bmb_soft.application.form.other.FormParcAutomobile;
 import nexus_bmb_soft.application.form.other.FormAffectations;
 import nexus_bmb_soft.application.form.other.FormEntretien;
+import nexus_bmb_soft.application.form.other.DefaultForm;
 import nexus_bmb_soft.menu.Menu;
 import nexus_bmb_soft.menu.MenuAction;
 

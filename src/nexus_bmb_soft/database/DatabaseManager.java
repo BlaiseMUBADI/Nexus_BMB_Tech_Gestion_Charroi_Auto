@@ -1,6 +1,7 @@
 package nexus_bmb_soft.database;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -84,7 +85,7 @@ public class DatabaseManager {
                                   "WHERE table_schema = 'Bdd_charroi_auto' " +
                                   "AND table_name = '" + tableName + "'";
                 
-                var rs = stmt.executeQuery(checkQuery);
+                ResultSet rs = stmt.executeQuery(checkQuery);
                 rs.next();
                 
                 if (rs.getInt(1) == 0) {
@@ -116,7 +117,7 @@ public class DatabaseManager {
                                     "WHERE CONSTRAINT_SCHEMA = 'Bdd_charroi_auto' " +
                                     "AND REFERENCED_TABLE_NAME IS NOT NULL";
             
-            var rs = stmt.executeQuery(checkConstraints);
+            ResultSet rs = stmt.executeQuery(checkConstraints);
             rs.next();
             int constraintCount = rs.getInt(1);
             
@@ -148,7 +149,7 @@ public class DatabaseManager {
             
             for (String table : tables) {
                 String countQuery = "SELECT COUNT(*) FROM " + table;
-                var rs = stmt.executeQuery(countQuery);
+                ResultSet rs = stmt.executeQuery(countQuery);
                 rs.next();
                 
                 if (rs.getInt(1) == 0) {
@@ -259,6 +260,17 @@ public class DatabaseManager {
             LOGGER.log(Level.SEVERE, "❌ Erreur lors de la création des tables", e);
             return false;
         }
+    }
+    
+    /**
+     * Recrée les tables avec sauvegarde (en cas de problème de structure)
+     */
+    private static boolean recreateTablesWithBackup() {
+        LOGGER.warning("🔧 Mise à jour de la structure nécessaire...");
+        
+        // Pour l'instant, on utilise la méthode existante
+        // Dans une version avancée, on pourrait faire une vraie migration
+        return createTables();
     }
     
     /**
@@ -388,7 +400,7 @@ public class DatabaseManager {
                     "AND REFERENCED_TABLE_NAME IS NOT NULL " +
                     "ORDER BY TABLE_NAME";
             
-            var rs = stmt.executeQuery(query);
+            ResultSet rs = stmt.executeQuery(query);
             boolean hasConstraints = false;
             
             while (rs.next()) {

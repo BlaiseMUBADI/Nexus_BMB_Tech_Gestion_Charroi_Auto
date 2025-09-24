@@ -23,7 +23,7 @@ public class FormDashboard extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
 
         lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lb.setText("Dashboard");
+        lb.setText("Tableau de Bord - Gestion Charroi Automobile");
 
         jButton1.setText("Show Notifications Test");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

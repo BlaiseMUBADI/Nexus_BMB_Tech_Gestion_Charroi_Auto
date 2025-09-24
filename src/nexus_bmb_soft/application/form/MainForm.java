@@ -19,6 +19,9 @@ import nexus_bmb_soft.application.Application;
 import nexus_bmb_soft.application.form.other.FormDashboard;
 import nexus_bmb_soft.application.form.other.FormInbox;
 import nexus_bmb_soft.application.form.other.FormRead;
+import nexus_bmb_soft.application.form.other.FormParcAutomobile;
+import nexus_bmb_soft.application.form.other.FormAffectations;
+import nexus_bmb_soft.application.form.other.FormEntretien;
 import nexus_bmb_soft.menu.Menu;
 import nexus_bmb_soft.menu.MenuAction;
 
@@ -69,18 +72,42 @@ public class MainForm extends JLayeredPane {
 
     private void initMenuEvent() {
         menu.addMenuEvent((int index, int subIndex, MenuAction action) -> {
-            // Application.mainForm.showForm(new DefaultForm("Form : " + index + " " + subIndex));
-            if (index == 0) {
-                Application.showForm(new FormDashboard());
-            } else if (index == 1) {
-                if (subIndex == 1) {
-                    Application.showForm(new FormInbox());
-                } else if (subIndex == 2) {
-                    Application.showForm(new FormRead());
+            System.out.println("Menu cliqué - Index: " + index + ", SubIndex: " + subIndex);
+            
+            if (index == 0) { // TABLEAU DE BORD
+                if (subIndex == 0) {
+                    Application.showForm(new FormDashboard());
                 } else {
                     action.cancel();
                 }
-            } else if (index == 9) {
+            } else if (index == 1) { // GESTION VÉHICULES - Parc Automobile
+                if (subIndex == 0) {
+                    Application.showForm(new FormParcAutomobile());
+                } else {
+                    // Sous-menus du parc automobile (à implémenter plus tard)
+                    Application.showForm(new DefaultForm("Parc Auto - Sous-menu " + subIndex));
+                }
+            } else if (index == 2) { // OPÉRATIONS - Affectations
+                if (subIndex == 0) {
+                    Application.showForm(new FormAffectations());
+                } else {
+                    // Sous-menus des affectations (à implémenter plus tard)
+                    Application.showForm(new DefaultForm("Affectations - Sous-menu " + subIndex));
+                }
+            } else if (index == 3) { // OPÉRATIONS - Entretien & Maintenance
+                if (subIndex == 0) {
+                    Application.showForm(new FormEntretien());
+                } else {
+                    // Sous-menus de l'entretien (à implémenter plus tard)
+                    Application.showForm(new DefaultForm("Entretien - Sous-menu " + subIndex));
+                }
+            } else if (index == 4) { // ADMINISTRATION - Utilisateurs
+                Application.showForm(new DefaultForm("Gestion Utilisateurs - En cours de développement"));
+            } else if (index == 5) { // ADMINISTRATION - Journalisation
+                Application.showForm(new DefaultForm("Journalisation - En cours de développement"));
+            } else if (index == 6) { // RAPPORTS
+                Application.showForm(new DefaultForm("Export & Rapports - En cours de développement"));
+            } else if (index == 7) { // SYSTÈME - Déconnexion
                 Application.logout();
             } else {
                 action.cancel();

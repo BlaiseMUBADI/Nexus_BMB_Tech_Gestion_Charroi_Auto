@@ -25,20 +25,20 @@ import nexus_bmb_soft.menu.mode.ToolBarAccentColor;
 public class Menu extends JPanel {
 
     private final String menuItems[][] = {
-        {"~MAIN~"},
-        {"Dashboard"},
-        {"~WEB APP~"},
-        {"Email", "Inbox", "Read", "Compost"},
-        {"Chat"},
-        {"Calendar"},
-        {"~COMPONENT~"},
-        {"Advanced UI", "Cropper", "Owl Carousel", "Sweet Alert"},
-        {"Forms", "Basic Elements", "Advanced Elements", "Editors", "Wizard"},
-        {"~OTHER~"},
-        {"Charts", "Apex", "Flot", "Peity", "Sparkline"},
-        {"Icons", "Feather Icons", "Flag Icons", "Mdi Icons"},
-        {"Special Pages", "Blank page", "Faq", "Invoice", "Profile", "Pricing", "Timeline"},
-        {"Logout"}
+        {"~TABLEAU DE BORD~"},
+        {"Dashboard", "Vue d'ensemble", "Statistiques", "Alertes"},
+        {"~GESTION VÉHICULES~"},
+        {"Parc Automobile", "Ajouter Véhicule", "Liste Véhicules", "Recherche/Filtres", "États/Disponibilité"},
+        {"~OPÉRATIONS~"},
+        {"Affectations", "Nouvelle Affectation", "Affectations Actives", "Historique", "Recherche par Conducteur"},
+        {"Entretien & Maintenance", "Programmer Entretien", "Historique Maintenance", "Alertes Échéances"},
+        {"~ADMINISTRATION~"},
+        {"Utilisateurs", "Gestion Conducteurs", "Gestion Gestionnaires", "Rôles & Permissions"},
+        {"Journalisation", "Log Actions Sensibles"},
+        {"~RAPPORTS~"},
+        {"Export & Rapports", "Rapport Véhicules PDF", "Rapport Affectations Excel", "Statistiques Maintenance"},
+        {"~SYSTÈME~"},
+        {"Déconnexion"}
     };
 
     public boolean isMenuFull() {

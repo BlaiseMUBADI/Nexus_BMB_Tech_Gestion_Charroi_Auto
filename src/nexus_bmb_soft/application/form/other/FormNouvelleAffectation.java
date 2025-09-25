@@ -611,6 +611,9 @@ public class FormNouvelleAffectation extends JPanel {
                     "Succès", 
                     JOptionPane.INFORMATION_MESSAGE);
                 
+                // Recharger les données pour mettre à jour l'interface
+                chargerDonnees();
+                
                 reinitialiserFormulaire();
             } else {
                 JOptionPane.showMessageDialog(this, 

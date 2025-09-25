@@ -5,7 +5,9 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.util.UIScale;
 import nexus_bmb_soft.application.form.other.FormGestionVehicules;
 import nexus_bmb_soft.application.form.other.FormRechercheEtats;
-import nexus_bmb_soft.application.form.other.FormGestionUtilisateurs;
+import nexus_bmb_soft.application.form.other.FormGestionConducteurs;
+import nexus_bmb_soft.application.form.other.FormGestionGestionnaires;
+import nexus_bmb_soft.application.form.other.FormGestionRoles;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -115,7 +117,21 @@ public class MainForm extends JLayeredPane {
                     Application.showForm(new DefaultForm("Entretien - Sous-menu " + subIndex));
                 }
             } else if (index == 4) { // ADMINISTRATION - Utilisateurs
-                Application.showForm(new FormGestionUtilisateurs());
+                if (subIndex == 0) {
+                    // Menu principal "Utilisateurs" - On peut garder un message ou rediriger
+                    Application.showForm(new DefaultForm("Utilisateurs - Sélectionnez un sous-menu"));
+                } else if (subIndex == 1) {
+                    // Sous-menu "Gestion Conducteurs"
+                    Application.showForm(new FormGestionConducteurs());
+                } else if (subIndex == 2) {
+                    // Sous-menu "Gestion Gestionnaires"
+                    Application.showForm(new FormGestionGestionnaires());
+                } else if (subIndex == 3) {
+                    // Sous-menu "Rôles & Permissions"
+                    Application.showForm(new FormGestionRoles());
+                } else {
+                    Application.showForm(new DefaultForm("Administration - Sous-menu " + subIndex));
+                }
             } else if (index == 5) { // ADMINISTRATION - Journalisation
                 Application.showForm(new DefaultForm("Journalisation - En cours de développement"));
             } else if (index == 6) { // RAPPORTS

@@ -63,7 +63,6 @@ public class FormRechercheEtats extends JPanel {
         
         // Panel principal avec onglets
         tabbedPane = new JTabbedPane();
-        tabbedPane.setFont(new Font("Arial", Font.PLAIN, 12));
         
         // Onglet Recherche/Filtres
         JPanel panelRecherche = createPanelRecherche();
@@ -106,7 +105,7 @@ public class FormRechercheEtats extends JPanel {
         panelCriteres.add(new JLabel(" Marque :", IconUtils.createListIcon(new Color(155, 89, 182), 16), JLabel.LEFT), gbc);
         gbc.gridx = 1;
         cmbMarque = new JComboBox<>(new String[]{"Toutes", "Toyota", "Nissan", "Mitsubishi", "Hyundai", "KIA", "Autre"});
-        cmbMarque.setFont(new Font("Arial", Font.PLAIN, 12));
+        cmbMarque.setFont(cmbMarque.getFont().deriveFont(12f));
         panelCriteres.add(cmbMarque, gbc);
         
         // Filtre par carburant
@@ -114,7 +113,7 @@ public class FormRechercheEtats extends JPanel {
         panelCriteres.add(new JLabel(" Type :", IconUtils.createRefreshIcon(new Color(230, 126, 34), 16), JLabel.LEFT), gbc);
         gbc.gridx = 3;
         cmbTypeCarburant = new JComboBox<>(new String[]{"Tous", "Berline", "SUV", "Pick-up", "Camion", "Autre"});
-        cmbTypeCarburant.setFont(new Font("Arial", Font.PLAIN, 12));
+        cmbTypeCarburant.setFont(cmbTypeCarburant.getFont().deriveFont(12f));
         panelCriteres.add(cmbTypeCarburant, gbc);
         
         // Filtre par statut
@@ -122,7 +121,7 @@ public class FormRechercheEtats extends JPanel {
         panelCriteres.add(new JLabel(" Disponibilité :", IconUtils.createCalendarIcon(new Color(231, 76, 60), 16), JLabel.LEFT), gbc);
         gbc.gridx = 3;
         cmbStatut = new JComboBox<>(new String[]{"Tous", "Disponible", "Non Disponible"});
-        cmbStatut.setFont(new Font("Arial", Font.PLAIN, 12));
+        cmbStatut.setFont(cmbStatut.getFont().deriveFont(12f));
         panelCriteres.add(cmbStatut, gbc);
         
         // Boutons d'action
@@ -130,14 +129,14 @@ public class FormRechercheEtats extends JPanel {
         panelBoutons.setBorder(BorderFactory.createTitledBorder("Actions"));
         
         btnRechercher = new JButton(" Rechercher", IconUtils.createSearchIcon(Color.WHITE, 16));
-        btnRechercher.setFont(new Font("Arial", Font.BOLD, 12));
+        btnRechercher.setFont(btnRechercher.getFont().deriveFont(Font.BOLD, 12f));
         btnRechercher.setBackground(new Color(52, 152, 219));
         btnRechercher.setForeground(Color.WHITE);
         btnRechercher.setFocusPainted(false);
         btnRechercher.addActionListener(e -> effectuerRecherche());
         
         btnReinitialiser = new JButton(" Réinitialiser", IconUtils.createRefreshIcon(Color.WHITE, 16));
-        btnReinitialiser.setFont(new Font("Arial", Font.BOLD, 12));
+        btnReinitialiser.setFont(btnReinitialiser.getFont().deriveFont(Font.BOLD, 12f));
         btnReinitialiser.setBackground(new Color(255, 165, 0));
         btnReinitialiser.setForeground(Color.WHITE);
         btnReinitialiser.setFocusPainted(false);
@@ -159,12 +158,12 @@ public class FormRechercheEtats extends JPanel {
         };
         
         tableResultats = new JTable(modelResultats);
-        tableResultats.setFont(new Font("Arial", Font.PLAIN, 11));
-        tableResultats.setRowHeight(25);
-        tableResultats.setSelectionBackground(new Color(232, 245, 253));
+        tableResultats.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableResultats.setRowHeight(30);
+        tableResultats.setFont(tableResultats.getFont().deriveFont(12f));
         tableResultats.getTableHeader().setBackground(new Color(52, 152, 219));
         tableResultats.getTableHeader().setForeground(Color.WHITE);
-        tableResultats.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        tableResultats.getTableHeader().setFont(tableResultats.getTableHeader().getFont().deriveFont(Font.BOLD, 12f));
         
         JScrollPane scrollResultats = new JScrollPane(tableResultats);
         scrollResultats.setBorder(BorderFactory.createTitledBorder("📋 Résultats de la Recherche"));
@@ -199,7 +198,7 @@ public class FormRechercheEtats extends JPanel {
         panelActualiser.setBorder(BorderFactory.createTitledBorder("Actions"));
         
         btnActualiser = new JButton(" Actualiser", IconUtils.createRefreshIcon(Color.WHITE, 16));
-        btnActualiser.setFont(new Font("Arial", Font.BOLD, 12));
+        btnActualiser.setFont(btnActualiser.getFont().deriveFont(Font.BOLD, 12f));
         btnActualiser.setBackground(new Color(52, 152, 219));
         btnActualiser.setForeground(Color.WHITE);
         btnActualiser.setFocusPainted(false);
@@ -216,12 +215,12 @@ public class FormRechercheEtats extends JPanel {
         };
         
         tableEtats = new JTable(modelEtats);
-        tableEtats.setFont(new Font("Arial", Font.PLAIN, 11));
-        tableEtats.setRowHeight(25);
-        tableEtats.setSelectionBackground(new Color(232, 245, 253));
+        tableEtats.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableEtats.setRowHeight(30);
+        tableEtats.setFont(tableEtats.getFont().deriveFont(12f));
         tableEtats.getTableHeader().setBackground(new Color(46, 204, 113));
         tableEtats.getTableHeader().setForeground(Color.WHITE);
-        tableEtats.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        tableEtats.getTableHeader().setFont(tableEtats.getTableHeader().getFont().deriveFont(Font.BOLD, 12f));
         
         JScrollPane scrollEtats = new JScrollPane(tableEtats);
         scrollEtats.setBorder(BorderFactory.createTitledBorder("📊 États Détaillés des Véhicules"));

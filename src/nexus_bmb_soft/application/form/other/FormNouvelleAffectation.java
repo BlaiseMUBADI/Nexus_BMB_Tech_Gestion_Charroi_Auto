@@ -342,78 +342,6 @@ public class FormNouvelleAffectation extends JPanel {
         return panel;
     }
     
-    private JPanel createValidationPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new CompoundBorder(
-            BorderFactory.createTitledBorder("✅ Validation et Sauvegarde"),
-            BorderFactory.createEmptyBorder(15, 15, 15, 15)
-        ));
-        
-        // Tableau récapitulatif
-        JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createTitledBorder("📋 Récapitulatif"));
-        
-        String[] colonnes = {"Élément", "Valeur", "Statut"};
-        modelRecap = new DefaultTableModel(colonnes, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        
-        tableRecapitulatif = new JTable(modelRecap);
-        tableRecapitulatif.setRowHeight(25);
-        JScrollPane scrollRecap = new JScrollPane(tableRecapitulatif);
-        scrollRecap.setPreferredSize(new Dimension(600, 200));
-        tablePanel.add(scrollRecap, BorderLayout.CENTER);
-        
-        // Notes finales
-        JPanel notesPanel = new JPanel(new BorderLayout());
-        notesPanel.setBorder(BorderFactory.createTitledBorder("📝 Notes finales"));
-        txtNotesFinales = new JTextArea(3, 30);
-        txtNotesFinales.setLineWrap(true);
-        txtNotesFinales.setWrapStyleWord(true);
-        txtNotesFinales.setBorder(BorderFactory.createLoweredBevelBorder());
-        JScrollPane scrollNotes = new JScrollPane(txtNotesFinales);
-        notesPanel.add(scrollNotes, BorderLayout.CENTER);
-        
-        // Boutons d'action harmonisés
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        
-        btnReinitialiser = new JButton("🔄 Réinitialiser");
-        btnReinitialiser.setBackground(new Color(255, 165, 0)); // Orange harmonisé
-        btnReinitialiser.setForeground(Color.WHITE);
-        btnReinitialiser.setPreferredSize(new Dimension(150, 35));
-        btnReinitialiser.addActionListener(e -> reinitialiserFormulaire());
-        
-        btnSauvegarder = new JButton("💾 Créer Affectation");
-        btnSauvegarder.setBackground(new Color(34, 139, 34)); // Vert harmonisé
-        btnSauvegarder.setForeground(Color.WHITE);
-        btnSauvegarder.setPreferredSize(new Dimension(170, 35));
-        btnSauvegarder.addActionListener(e -> sauvegarderAffectation());
-        
-        buttonPanel.add(btnReinitialiser);
-        buttonPanel.add(btnSauvegarder);
-        
-        // Statut validation
-        lblStatutValidation = new JLabel("⏳ En attente de validation...");
-        lblStatutValidation.setHorizontalAlignment(SwingConstants.CENTER);
-        lblStatutValidation.setFont(lblStatutValidation.getFont().deriveFont(Font.BOLD));
-        
-        JPanel mainValidationPanel = new JPanel(new BorderLayout(10, 10));
-        mainValidationPanel.add(tablePanel, BorderLayout.CENTER);
-        
-        JPanel bottomPanel = new JPanel(new BorderLayout(10, 10));
-        bottomPanel.add(notesPanel, BorderLayout.CENTER);
-        bottomPanel.add(lblStatutValidation, BorderLayout.NORTH);
-        bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
-        
-        mainValidationPanel.add(bottomPanel, BorderLayout.SOUTH);
-        panel.add(mainValidationPanel, BorderLayout.CENTER);
-        
-        return panel;
-    }
-    
     private void chargerDonnees() {
         // Charger les données dans un seul thread pour éviter les problèmes de connexion DB
         try {
@@ -916,7 +844,7 @@ public class FormNouvelleAffectation extends JPanel {
         
         // Boutons d'action
         gbcRight.gridy = 1;
-        JButton btnSauvegarder = new JButton("💾 Créer l'Affectation");
+        btnSauvegarder = new JButton("💾 Créer l'Affectation");
         btnSauvegarder.setBackground(new Color(46, 204, 113));
         btnSauvegarder.setForeground(Color.WHITE);
         btnSauvegarder.setFont(btnSauvegarder.getFont().deriveFont(Font.BOLD));

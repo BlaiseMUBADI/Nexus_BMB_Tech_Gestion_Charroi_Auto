@@ -351,7 +351,11 @@ public class FormNouvelleAffectation extends JPanel {
     private void chargerDonnees() {
         // Charger les données dans un seul thread pour éviter les problèmes de connexion DB
         try {
-            // Charger les véhicules
+            // 🔄 SYNCHRONISER LA DISPONIBILITÉ RÉELLE avant de charger les véhicules
+            System.out.println("🔄 Synchronisation de la disponibilité des véhicules...");
+            vehiculeDAO.synchroniserToutesLesDisponibilites();
+            
+            // Charger les véhicules (maintenant avec la disponibilité correcte)
             List<Vehicule> vehicules = vehiculeDAO.getTousVehicules();
             
             // Charger les utilisateurs une seule fois

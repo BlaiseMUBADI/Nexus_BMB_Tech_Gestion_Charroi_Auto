@@ -373,4 +373,74 @@ public class VehiculeDAO {
                                total, disponibles, affectes);
         }
     }
+    
+    /**
+     * Vérifie si un véhicule est réellement disponible en se basant sur les affectations actives
+     * @param vehiculeId ID du véhicule
+     * @return true si le véhicule est disponible
+     */
+    public boolean estRealementDisponible(int vehiculeId) {
+        String sql = "SELECT COUNT(*) FROM affectation " +
+                    "WHERE vehicule_id = ? " +
+                    "AND date_debut <= CURDATE() " +
+                    "AND (date_fin IS NULL OR date_fin >= CURDATE()) " +
+                    "AND statut = 'ACTIVE'";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, vehiculeId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) == 0; // Aucune affectation active
+                }
+            }
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors de la vérification de disponibilité réelle", e);
+        }
+        
+        return false; // En cas d'erreur, considérer comme non disponible
+    }
+    
+    /**
+     * Met à jour le statut de disponibilité d'un véhicule basé sur ses affectations actives
+     * @param vehiculeId ID du véhicule
+     */
+    public void synchroniserDisponibilite(int vehiculeId) {
+        boolean realementDisponible = estRealementDisponible(vehiculeId);
+        
+        String sql = "UPDATE vehicule SET disponible = ? WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setBoolean(1, realementDisponible);
+            pstmt.setInt(2, vehiculeId);
+            
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                LOGGER.info(String.format("✅ Véhicule ID %d synchronisé: %s", 
+                          vehiculeId, realementDisponible ? "DISPONIBLE" : "AFFECTÉ"));
+            }
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors de la synchronisation de disponibilité", e);
+        }
+    }
+    
+    /**
+     * Synchronise la disponibilité de tous les véhicules
+     */
+    public void synchroniserToutesLesDisponibilites() {
+        LOGGER.info("🔄 Synchronisation de la disponibilité de tous les véhicules...");
+        
+        List<Vehicule> vehicules = getTousVehicules();
+        for (Vehicule vehicule : vehicules) {
+            synchroniserDisponibilite(vehicule.getId());
+        }
+        
+        LOGGER.info("✅ Synchronisation terminée pour " + vehicules.size() + " véhicules");
+    }
 }

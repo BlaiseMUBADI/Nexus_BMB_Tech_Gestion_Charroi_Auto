@@ -105,6 +105,11 @@ public class FormNouvelleAffectation extends JPanel {
         utilisateurDAO = new UtilisateurDAO();
         init();
         chargerDonnees();
+        
+        // S'assurer que les conducteurs sont chargés
+        SwingUtilities.invokeLater(() -> {
+            chargerConducteurs();
+        });
     }
     
     private void init() {
@@ -412,6 +417,9 @@ public class FormNouvelleAffectation extends JPanel {
                 }
                 
                 // Charger les conducteurs actifs
+                chargerConducteurs();
+                
+                // Mettre à jour les compteurs
                 List<Utilisateur> utilisateurs = utilisateurDAO.lireTous();
                 List<Utilisateur> conducteurs = utilisateurs.stream()
                     .filter(u -> u.getRole() == RoleUtilisateur.CONDUCTEUR || 
@@ -419,14 +427,6 @@ public class FormNouvelleAffectation extends JPanel {
                     .filter(u -> "ACTIF".equals(u.getStatut()))
                     .collect(Collectors.toList());
                 
-                cmbConducteur.removeAllItems();
-                cmbConducteur.addItem(null); // Option vide
-                
-                for (Utilisateur conducteur : conducteurs) {
-                    cmbConducteur.addItem(new ConducteurItem(conducteur));
-                }
-                
-                // Mettre à jour les compteurs
                 mettreAJourCompteurs(vehicules, conducteurs);
                 
             } catch (Exception e) {
@@ -436,6 +436,34 @@ public class FormNouvelleAffectation extends JPanel {
                     JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+    
+    private void chargerConducteurs() {
+        try {
+            List<Utilisateur> utilisateurs = utilisateurDAO.lireTous();
+            List<Utilisateur> conducteurs = utilisateurs.stream()
+                .filter(u -> u.getRole() == RoleUtilisateur.CONDUCTEUR || 
+                            u.getRole() == RoleUtilisateur.CONDUCTEUR_SENIOR)
+                .filter(u -> "ACTIF".equals(u.getStatut()))
+                .collect(Collectors.toList());
+            
+            cmbConducteur.removeAllItems();
+            cmbConducteur.addItem(null); // Option vide
+            
+            for (Utilisateur conducteur : conducteurs) {
+                cmbConducteur.addItem(new ConducteurItem(conducteur));
+            }
+            
+            // Force un refresh du ComboBox
+            cmbConducteur.revalidate();
+            cmbConducteur.repaint();
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Erreur lors du chargement des conducteurs: " + e.getMessage(), 
+                "Erreur de chargement", 
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void mettreAJourCompteurs(List<Vehicule> vehicules, List<Utilisateur> conducteurs) {

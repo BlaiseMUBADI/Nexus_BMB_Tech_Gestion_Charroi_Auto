@@ -52,9 +52,9 @@ public class FormRechercheEtats extends JPanel {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createRaisedBevelBorder());
         
-        // Titre principal avec style uniforme
-        JLabel lblTitrePrincipal = new JLabel(" 🔍 Recherche & États des Véhicules", JLabel.CENTER);
-        lblTitrePrincipal.setFont(new Font("Arial", Font.BOLD, 18));
+        // Titre principal
+        JLabel lblTitrePrincipal = new JLabel("🔍 Recherche & États des Véhicules", JLabel.CENTER);
+        lblTitrePrincipal.setFont(lblTitrePrincipal.getFont().deriveFont(Font.BOLD, 20f));
         lblTitrePrincipal.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         lblTitrePrincipal.setOpaque(true);
         lblTitrePrincipal.setBackground(new Color(70, 130, 180));

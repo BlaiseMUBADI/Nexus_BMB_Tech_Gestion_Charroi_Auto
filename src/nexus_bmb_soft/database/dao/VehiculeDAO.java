@@ -262,28 +262,6 @@ public class VehiculeDAO {
     }
     
     /**
-     * Récupère les véhicules disponibles
-     */
-    public List<Vehicule> getVehiculesDisponibles() {
-        List<Vehicule> vehicules = new ArrayList<>();
-        String sql = "SELECT * FROM vehicule WHERE disponible = TRUE ORDER BY matricule";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            
-            while (rs.next()) {
-                vehicules.add(mapResultSetToVehicule(rs));
-            }
-            
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "❌ Erreur lors de la récupération des véhicules disponibles", e);
-        }
-        
-        return vehicules;
-    }
-    
-    /**
      * Recherche de véhicules par critères
      */
     public List<Vehicule> rechercherVehicules(String critere) {

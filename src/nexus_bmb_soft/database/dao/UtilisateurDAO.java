@@ -506,7 +506,7 @@ public class UtilisateurDAO {
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setId(rs.getInt("id"));
         utilisateur.setNom(rs.getString("nom"));
-        utilisateur.setRole(RoleUtilisateur.valueOf(rs.getString("role")));
+        utilisateur.setRole(RoleUtilisateur.fromString(rs.getString("role")));
         utilisateur.setMotDePasseHash(rs.getString("mot_de_passe_hash"));
         
         // Colonnes optionnelles

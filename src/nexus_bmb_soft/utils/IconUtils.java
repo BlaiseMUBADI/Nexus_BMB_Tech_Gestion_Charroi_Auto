@@ -196,4 +196,132 @@ public class IconUtils {
             public int getIconHeight() { return size; }
         };
     }
+    
+    /**
+     * Crée une icône d'affectation (clé + voiture)
+     */
+    public static Icon createAssignmentIcon(Color color, int size) {
+        return new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(color);
+                
+                // Clé
+                g2.fillOval(x + 2, y + 2, size/3, size/3);
+                g2.drawLine(x + size/6, y + size/3, x + size/6, y + size*2/3);
+                g2.drawLine(x + size/6, y + size/2, x + size/4, y + size/2);
+                
+                // Flèche d'assignation
+                g2.drawLine(x + size/3, y + size/2, x + size*2/3, y + size/2);
+                int[] xArrow = {x + size*2/3, x + size*2/3 - 3, x + size*2/3 - 3};
+                int[] yArrow = {y + size/2, y + size/2 - 2, y + size/2 + 2};
+                g2.fillPolygon(xArrow, yArrow, 3);
+                
+                // Voiture simplifiée
+                g2.fillRoundRect(x + size*3/4, y + size*2/5, size/5, size/6, 2, 2);
+                
+                g2.dispose();
+            }
+
+            @Override
+            public int getIconWidth() { return size; }
+
+            @Override
+            public int getIconHeight() { return size; }
+        };
+    }
+    
+    /**
+     * Crée une icône d'historique (horloge)
+     */
+    public static Icon createHistoryIcon(Color color, int size) {
+        return new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(color);
+                g2.setStroke(new BasicStroke(1.5f));
+                
+                // Cercle de l'horloge
+                g2.drawOval(x + 2, y + 2, size - 4, size - 4);
+                
+                // Centre
+                g2.fillOval(x + size/2 - 1, y + size/2 - 1, 2, 2);
+                
+                // Aiguille des heures
+                g2.drawLine(x + size/2, y + size/2, x + size/2 + 2, y + size/2 - 3);
+                
+                // Aiguille des minutes
+                g2.drawLine(x + size/2, y + size/2, x + size/2, y + size/2 - 5);
+                
+                g2.dispose();
+            }
+
+            @Override
+            public int getIconWidth() { return size; }
+
+            @Override
+            public int getIconHeight() { return size; }
+        };
+    }
+    
+    /**
+     * Crée une icône de recherche (loupe)
+     */
+    public static Icon createSearchIcon(Color color, int size) {
+        return new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(color);
+                g2.setStroke(new BasicStroke(1.5f));
+                
+                // Cercle de la loupe
+                g2.drawOval(x + 2, y + 2, size*2/3, size*2/3);
+                
+                // Manche de la loupe
+                g2.drawLine(x + size*2/3, y + size*2/3, x + size - 2, y + size - 2);
+                
+                g2.dispose();
+            }
+
+            @Override
+            public int getIconWidth() { return size; }
+
+            @Override
+            public int getIconHeight() { return size; }
+        };
+    }
+    
+    /**
+     * Crée une icône d'utilisateur (personne)
+     */
+    public static Icon createUserIcon(Color color, int size) {
+        return new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(color);
+                
+                // Tête
+                g2.fillOval(x + size/3, y + 2, size/3, size/3);
+                
+                // Corps (arc)
+                g2.fillArc(x + size/6, y + size/2, size*2/3, size/2, 0, 180);
+                
+                g2.dispose();
+            }
+
+            @Override
+            public int getIconWidth() { return size; }
+
+            @Override
+            public int getIconHeight() { return size; }
+        };
+    }
 }

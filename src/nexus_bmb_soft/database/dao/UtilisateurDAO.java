@@ -308,7 +308,9 @@ public class UtilisateurDAO {
         sql.append(" FROM utilisateur ORDER BY nom");
         if (hasPrenom) sql.append(", prenom");
         
-        try (Statement stmt = connection.createStatement();
+        // Utiliser try-with-resources pour obtenir une nouvelle connexion
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql.toString())) {
             
             while (rs.next()) {

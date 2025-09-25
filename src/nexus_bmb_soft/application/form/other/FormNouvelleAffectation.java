@@ -105,11 +105,6 @@ public class FormNouvelleAffectation extends JPanel {
         utilisateurDAO = new UtilisateurDAO();
         init();
         chargerDonnees();
-        
-        // S'assurer que les conducteurs sont chargés
-        SwingUtilities.invokeLater(() -> {
-            chargerConducteurs();
-        });
     }
     
     private void init() {
@@ -405,10 +400,22 @@ public class FormNouvelleAffectation extends JPanel {
     }
     
     private void chargerDonnees() {
-        // Charger les véhicules disponibles
-        SwingUtilities.invokeLater(() -> {
-            try {
-                List<Vehicule> vehicules = vehiculeDAO.getTousVehicules();
+        // Charger les données dans un seul thread pour éviter les problèmes de connexion DB
+        try {
+            // Charger les véhicules
+            List<Vehicule> vehicules = vehiculeDAO.getTousVehicules();
+            
+            // Charger les utilisateurs une seule fois
+            List<Utilisateur> utilisateurs = utilisateurDAO.lireTous();
+            List<Utilisateur> conducteurs = utilisateurs.stream()
+                .filter(u -> u.getRole() == RoleUtilisateur.CONDUCTEUR || 
+                            u.getRole() == RoleUtilisateur.CONDUCTEUR_SENIOR)
+                .filter(u -> "ACTIF".equals(u.getStatut()))
+                .collect(Collectors.toList());
+            
+            // Mettre à jour l'interface dans l'EDT
+            SwingUtilities.invokeLater(() -> {
+                // Charger les véhicules
                 cmbVehicule.removeAllItems();
                 cmbVehicule.addItem(null); // Option vide
                 
@@ -416,26 +423,30 @@ public class FormNouvelleAffectation extends JPanel {
                     cmbVehicule.addItem(new VehiculeItem(vehicule));
                 }
                 
-                // Charger les conducteurs actifs
-                chargerConducteurs();
+                // Charger les conducteurs
+                cmbConducteur.removeAllItems();
+                cmbConducteur.addItem(null); // Option vide
+                
+                for (Utilisateur conducteur : conducteurs) {
+                    cmbConducteur.addItem(new ConducteurItem(conducteur));
+                }
+                
+                // Force un refresh des ComboBox
+                cmbVehicule.revalidate();
+                cmbConducteur.revalidate();
                 
                 // Mettre à jour les compteurs
-                List<Utilisateur> utilisateurs = utilisateurDAO.lireTous();
-                List<Utilisateur> conducteurs = utilisateurs.stream()
-                    .filter(u -> u.getRole() == RoleUtilisateur.CONDUCTEUR || 
-                                u.getRole() == RoleUtilisateur.CONDUCTEUR_SENIOR)
-                    .filter(u -> "ACTIF".equals(u.getStatut()))
-                    .collect(Collectors.toList());
-                
                 mettreAJourCompteurs(vehicules, conducteurs);
-                
-            } catch (Exception e) {
+            });
+            
+        } catch (Exception e) {
+            SwingUtilities.invokeLater(() -> {
                 JOptionPane.showMessageDialog(this, 
                     "Erreur lors du chargement des données: " + e.getMessage(), 
                     "Erreur", 
                     JOptionPane.ERROR_MESSAGE);
-            }
-        });
+            });
+        }
     }
     
     private void chargerConducteurs() {

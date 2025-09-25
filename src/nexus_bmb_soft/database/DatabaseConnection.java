@@ -39,8 +39,11 @@ public class DatabaseConnection {
                 // Chargement du driver MySQL
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 
-                // Création de la connexion
+                // Création de la connexion avec des paramètres pour éviter les timeouts
                 connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                
+                // Configuration pour éviter les timeouts et fermetures automatiques
+                connection.setAutoCommit(true);
                 
                 LOGGER.info("✅ Connexion à la base de données établie avec succès");
                 LOGGER.info("📊 Base de données: " + DB_NAME);

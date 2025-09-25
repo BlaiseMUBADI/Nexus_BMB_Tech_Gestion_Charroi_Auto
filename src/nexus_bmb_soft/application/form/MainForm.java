@@ -28,6 +28,10 @@ import nexus_bmb_soft.application.form.other.FormParcAutomobile;
 import nexus_bmb_soft.application.form.other.FormGestionVehicules;
 import nexus_bmb_soft.application.form.other.FormRechercheEtats;
 import nexus_bmb_soft.application.form.other.FormAffectations;
+import nexus_bmb_soft.application.form.other.FormNouvelleAffectation;
+import nexus_bmb_soft.application.form.other.FormAffectationsActives;
+import nexus_bmb_soft.application.form.other.FormHistoriqueAffectations;
+import nexus_bmb_soft.application.form.other.FormRechercheAffectations;
 import nexus_bmb_soft.application.form.other.FormEntretien;
 import nexus_bmb_soft.application.form.other.DefaultForm;
 import nexus_bmb_soft.menu.Menu;
@@ -104,9 +108,22 @@ public class MainForm extends JLayeredPane {
                 }
             } else if (index == 2) { // OPÉRATIONS - Affectations
                 if (subIndex == 0) {
+                    // Menu principal "Affectations" - Afficher l'interface générale
                     Application.showForm(new FormAffectations());
+                } else if (subIndex == 1) {
+                    // Sous-menu "Nouvelle Affectation"
+                    Application.showForm(new FormNouvelleAffectation());
+                } else if (subIndex == 2) {
+                    // Sous-menu "Affectations Actives"
+                    Application.showForm(new FormAffectationsActives());
+                } else if (subIndex == 3) {
+                    // Sous-menu "Historique"
+                    Application.showForm(new FormHistoriqueAffectations());
+                } else if (subIndex == 4) {
+                    // Sous-menu "Recherche par Conducteur"
+                    Application.showForm(new FormRechercheAffectations());
                 } else {
-                    // Sous-menus des affectations (à implémenter plus tard)
+                    // Autres sous-menus (futurs développements)
                     Application.showForm(new DefaultForm("Affectations - Sous-menu " + subIndex));
                 }
             } else if (index == 3) { // OPÉRATIONS - Entretien & Maintenance

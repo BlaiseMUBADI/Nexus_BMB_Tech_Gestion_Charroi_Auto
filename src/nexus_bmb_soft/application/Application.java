@@ -83,6 +83,9 @@ public class Application extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public static void main(String args[]) {
+        
+        // Ajouter cette ligne dans une classe main pour tester
+        
         FlatRobotoFont.install();
         FlatLaf.registerCustomDefaultsSource("nexus_bmb_soft.theme");
         UIManager.put("defaultFont", new Font(FlatRobotoFont.FAMILY, Font.PLAIN, 13));
@@ -91,7 +94,10 @@ public class Application extends javax.swing.JFrame {
             app = new Application();
             //  app.applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             app.setVisible(true);
+            //nexus_bmb_soft.database.DatabaseTester.runFullTest();
         });
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -65,7 +65,7 @@ public class Menu extends JPanel {
 
     private final List<MenuEvent> events = new ArrayList<>();
     private boolean menuFull = true;
-    private final String headerName = "🚗 FLEET MANAGER";
+    private final String headerName = "Académia AUTO";
 
     protected final boolean hideMenuTitleOnMinimum = true;
     protected final int menuTitleLeftInset = 5;
@@ -85,7 +85,7 @@ public class Menu extends JPanel {
                 + "background:$Menu.background;"
                 + "arc:10");
         header = new JLabel(headerName);
-        header.setIcon(new ImageIcon(getClass().getResource("/nexus_bmb_soft/icon/png/logo.png")));
+        header.setIcon(new ImageIcon(getClass().getResource("/nexus_bmb_soft/icon/png/logo_1.png")));
         header.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:$Menu.header.font;"
                 + "foreground:$Menu.foreground");

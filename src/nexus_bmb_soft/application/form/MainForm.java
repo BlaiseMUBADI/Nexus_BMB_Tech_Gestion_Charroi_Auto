@@ -3,6 +3,9 @@ package nexus_bmb_soft.application.form;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.util.UIScale;
+import nexus_bmb_soft.application.form.other.FormGestionVehicules;
+import nexus_bmb_soft.application.form.other.FormRechercheEtats;
+import nexus_bmb_soft.application.form.other.FormGestionUtilisateurs;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -112,7 +115,7 @@ public class MainForm extends JLayeredPane {
                     Application.showForm(new DefaultForm("Entretien - Sous-menu " + subIndex));
                 }
             } else if (index == 4) { // ADMINISTRATION - Utilisateurs
-                Application.showForm(new DefaultForm("Gestion Utilisateurs - En cours de développement"));
+                Application.showForm(new FormGestionUtilisateurs());
             } else if (index == 5) { // ADMINISTRATION - Journalisation
                 Application.showForm(new DefaultForm("Journalisation - En cours de développement"));
             } else if (index == 6) { // RAPPORTS

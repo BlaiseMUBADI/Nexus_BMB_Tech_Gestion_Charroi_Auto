@@ -1,5 +1,7 @@
 package nexus_bmb_soft.models;
 
+import java.time.LocalDateTime;
+
 /**
  * Classe modèle pour les utilisateurs
  * Correspond à la table 'utilisateur' de la base de données
@@ -10,8 +12,12 @@ public class Utilisateur {
     
     private int id;
     private String nom;
+    private String prenom;
+    private String email;
     private RoleUtilisateur role;
+    private String statut; // ACTIF, INACTIF, SUSPENDU
     private String motDePasseHash;
+    private LocalDateTime dateCreation;
     
     // Constructeurs
     public Utilisateur() {
@@ -27,6 +33,15 @@ public class Utilisateur {
         this.nom = nom;
         this.role = role;
         this.motDePasseHash = motDePasseHash;
+    }
+    
+    public Utilisateur(String nom, String prenom, String email, RoleUtilisateur role, String statut) {
+        this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+        this.role = role;
+        this.statut = statut;
+        this.dateCreation = LocalDateTime.now();
     }
     
     // Getters et Setters
@@ -46,6 +61,22 @@ public class Utilisateur {
         this.nom = nom;
     }
     
+    public String getPrenom() {
+        return prenom;
+    }
+    
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
     public RoleUtilisateur getRole() {
         return role;
     }
@@ -54,12 +85,34 @@ public class Utilisateur {
         this.role = role;
     }
     
+    public String getStatut() {
+        return statut;
+    }
+    
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+    
     public String getMotDePasseHash() {
         return motDePasseHash;
     }
     
     public void setMotDePasseHash(String motDePasseHash) {
         this.motDePasseHash = motDePasseHash;
+    }
+    
+    public LocalDateTime getDateCreation() {
+        return dateCreation;
+    }
+    
+    public void setDateCreation(LocalDateTime dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+    
+    // Méthode pour définir le mot de passe (sera hashé)
+    public void setMotDePasse(String motDePasse) {
+        // Pour le moment, simple stockage - en production, utiliser BCrypt ou similaire
+        this.motDePasseHash = motDePasse;
     }
     
     // Méthodes utilitaires

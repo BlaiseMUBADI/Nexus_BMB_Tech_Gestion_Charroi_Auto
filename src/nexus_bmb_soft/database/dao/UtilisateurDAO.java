@@ -577,4 +577,34 @@ public class UtilisateurDAO {
         
         return utilisateur;
     }
+    
+    /**
+     * Récupère uniquement les conducteurs disponibles (pas d'affectation active)
+     */
+    public List<Utilisateur> getConducteursDisponibles() {
+        List<Utilisateur> conducteursDisponibles = new ArrayList<>();
+        
+        String sql = "SELECT u.* FROM utilisateur u " +
+                    "LEFT JOIN affectation a ON u.id = a.conducteur_id AND a.statut = 'en_cours' " +
+                    "WHERE u.role IN ('CONDUCTEUR', 'CONDUCTEUR_SENIOR') " +
+                    "AND u.statut = 'ACTIF' " +
+                    "AND a.conducteur_id IS NULL " +
+                    "ORDER BY u.nom";
+        
+        try (PreparedStatement pstmt = connection.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                Utilisateur utilisateur = mapResultSetToUtilisateur(rs);
+                conducteursDisponibles.add(utilisateur);
+            }
+            
+            System.out.println("✅ " + conducteursDisponibles.size() + " conducteurs disponibles récupérés");
+            
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la récupération des conducteurs disponibles: " + e.getMessage());
+        }
+        
+        return conducteursDisponibles;
+    }
 }

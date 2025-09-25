@@ -349,38 +349,34 @@ public class FormNouvelleAffectation extends JPanel {
     }
     
     private void chargerDonnees() {
-        // Charger les données dans un seul thread pour éviter les problèmes de connexion DB
         try {
-            // 🔄 SYNCHRONISER LA DISPONIBILITÉ RÉELLE avant de charger les véhicules
-            System.out.println("🔄 Synchronisation de la disponibilité des véhicules...");
+            // 🎯 RÉCUPÉRER UNIQUEMENT LES ÉLÉMENTS RÉELLEMENT DISPONIBLES
+            System.out.println("🔄 Chargement des véhicules et conducteurs disponibles...");
+            
+            // Charger uniquement les véhicules sans affectation active
+            List<Vehicule> vehiculesDisponibles = vehiculeDAO.getVehiculesDisponibles();
+            
+            // Charger uniquement les conducteurs sans affectation active
+            List<Utilisateur> conducteursDisponibles = utilisateurDAO.getConducteursDisponibles();
+            
+            // Synchroniser pour garantir la cohérence
             vehiculeDAO.synchroniserToutesLesDisponibilites();
-            
-            // Charger les véhicules (maintenant avec la disponibilité correcte)
-            List<Vehicule> vehicules = vehiculeDAO.getTousVehicules();
-            
-            // Charger les utilisateurs une seule fois
-            List<Utilisateur> utilisateurs = utilisateurDAO.lireTous();
-            List<Utilisateur> conducteurs = utilisateurs.stream()
-                .filter(u -> u.getRole() == RoleUtilisateur.CONDUCTEUR || 
-                            u.getRole() == RoleUtilisateur.CONDUCTEUR_SENIOR)
-                .filter(u -> "ACTIF".equals(u.getStatut()))
-                .collect(Collectors.toList());
             
             // Mettre à jour l'interface dans l'EDT
             SwingUtilities.invokeLater(() -> {
-                // Charger les véhicules
+                // Charger SEULEMENT les véhicules disponibles
                 cmbVehicule.removeAllItems();
                 cmbVehicule.addItem(null); // Option vide
                 
-                for (Vehicule vehicule : vehicules) {
+                for (Vehicule vehicule : vehiculesDisponibles) {
                     cmbVehicule.addItem(new VehiculeItem(vehicule));
                 }
                 
-                // Charger les conducteurs
+                // Charger SEULEMENT les conducteurs disponibles
                 cmbConducteur.removeAllItems();
                 cmbConducteur.addItem(null); // Option vide
                 
-                for (Utilisateur conducteur : conducteurs) {
+                for (Utilisateur conducteur : conducteursDisponibles) {
                     cmbConducteur.addItem(new ConducteurItem(conducteur));
                 }
                 
@@ -388,8 +384,8 @@ public class FormNouvelleAffectation extends JPanel {
                 cmbVehicule.revalidate();
                 cmbConducteur.revalidate();
                 
-                // Mettre à jour les compteurs
-                mettreAJourCompteurs(vehicules, conducteurs);
+                // Mettre à jour les compteurs avec les données réellement disponibles
+                mettreAJourCompteurs(vehiculesDisponibles, conducteursDisponibles);
             });
             
         } catch (Exception e) {

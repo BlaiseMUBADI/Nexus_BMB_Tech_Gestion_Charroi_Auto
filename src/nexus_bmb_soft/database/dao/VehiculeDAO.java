@@ -94,6 +94,36 @@ public class VehiculeDAO {
     }
     
     /**
+     * Récupère uniquement les véhicules réellement disponibles
+     * Un véhicule est disponible s'il n'a PAS d'affectation active (statut = 'en_cours')
+     */
+    public List<Vehicule> getVehiculesDisponibles() {
+        List<Vehicule> vehiculesDisponibles = new ArrayList<>();
+        
+        String sql = "SELECT v.* FROM vehicule v " +
+                    "LEFT JOIN affectation a ON v.id = a.vehicule_id AND a.statut = 'en_cours' " +
+                    "WHERE a.vehicule_id IS NULL " +
+                    "ORDER BY v.matricule";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                Vehicule vehicule = mapResultSetToVehicule(rs);
+                vehiculesDisponibles.add(vehicule);
+            }
+            
+            LOGGER.info("✅ " + vehiculesDisponibles.size() + " véhicules réellement disponibles récupérés");
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors de la récupération des véhicules disponibles", e);
+        }
+        
+        return vehiculesDisponibles;
+    }
+    
+    /**
      * Récupère un véhicule par son ID
      */
     public Vehicule getVehiculeParId(int id) {

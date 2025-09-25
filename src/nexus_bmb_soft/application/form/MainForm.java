@@ -21,6 +21,7 @@ import nexus_bmb_soft.application.form.other.FormInbox;
 import nexus_bmb_soft.application.form.other.FormRead;
 import nexus_bmb_soft.application.form.other.FormParcAutomobile;
 import nexus_bmb_soft.application.form.other.FormGestionVehicules;
+import nexus_bmb_soft.application.form.other.FormRechercheEtats;
 import nexus_bmb_soft.application.form.other.FormAffectations;
 import nexus_bmb_soft.application.form.other.FormEntretien;
 import nexus_bmb_soft.application.form.other.DefaultForm;
@@ -89,6 +90,9 @@ public class MainForm extends JLayeredPane {
                 } else if (subIndex == 1) {
                     // Sous-menu "Gestion Véhicules" : Interface unifiée
                     Application.showForm(new FormGestionVehicules());
+                } else if (subIndex == 2) {
+                    // Sous-menu "Recherche & États" : Interface unifiée
+                    Application.showForm(new FormRechercheEtats());
                 } else {
                     // Autres sous-menus (à implémenter plus tard)
                     Application.showForm(new DefaultForm("Parc Auto - Sous-menu " + subIndex));

@@ -199,7 +199,7 @@ public class DatabaseManager {
             String createUtilisateur = "CREATE TABLE IF NOT EXISTS utilisateur (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "nom VARCHAR(100) NOT NULL," +
-                    "role ENUM('admin', 'gestionnaire', 'conducteur') NOT NULL," +
+                    "role ENUM('admin', 'gestionnaire', 'conducteur', 'conducteur_senior', 'super_admin') NOT NULL," +
                     "mot_de_passe_hash VARCHAR(255) NOT NULL," +
                     "actif BOOLEAN DEFAULT TRUE," +
                     "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
@@ -315,7 +315,7 @@ public class DatabaseManager {
             String createUtilisateur = "CREATE TABLE utilisateur (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "nom VARCHAR(100) NOT NULL," +
-                    "role ENUM('admin', 'gestionnaire', 'conducteur') NOT NULL," +
+                    "role ENUM('admin', 'gestionnaire', 'conducteur', 'conducteur_senior', 'super_admin') NOT NULL," +
                     "mot_de_passe_hash VARCHAR(255) NOT NULL," +
                     "actif BOOLEAN DEFAULT TRUE," +
                     "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +

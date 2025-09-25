@@ -8,7 +8,9 @@ package nexus_bmb_soft.models;
 public enum RoleUtilisateur {
     ADMIN("admin"),
     GESTIONNAIRE("gestionnaire"), 
-    CONDUCTEUR("conducteur");
+    CONDUCTEUR("conducteur"),
+    CONDUCTEUR_SENIOR("conducteur_senior"),
+    SUPER_ADMIN("super_admin");
     
     private final String valeur;
     

@@ -103,6 +103,11 @@ public class FormNouvelleAffectation extends JPanel {
         utilisateurDAO = new UtilisateurDAO();
         init();
         chargerDonnees();
+        
+        // Initialiser le récapitulatif après chargement
+        SwingUtilities.invokeLater(() -> {
+            mettreAJourRecapitulatif();
+        });
     }
     
     private void init() {
@@ -857,7 +862,14 @@ public class FormNouvelleAffectation extends JPanel {
             TitledBorder.TOP
         ));
         
+        // Panel principal avec layout en colonnes
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        
         // Panel gauche: Récapitulatif
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridheight = 2;
+        gbc.fill = GridBagConstraints.BOTH; gbc.weightx = 0.5; gbc.weighty = 1.0;
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBorder(BorderFactory.createTitledBorder("📋 Récapitulatif"));
         
@@ -872,39 +884,53 @@ public class FormNouvelleAffectation extends JPanel {
         JScrollPane scrollRecap = new JScrollPane(tableRecap);
         scrollRecap.setPreferredSize(new Dimension(400, 150));
         leftPanel.add(scrollRecap, BorderLayout.CENTER);
+        mainPanel.add(leftPanel, gbc);
+        
+        // Panel milieu: Notes finales
+        gbc.gridx = 1; gbc.gridy = 0; gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.BOTH; gbc.weightx = 0.3; gbc.weighty = 0.5;
+        JPanel notesPanel = new JPanel(new BorderLayout());
+        notesPanel.setBorder(BorderFactory.createTitledBorder("📝 Notes finales"));
+        
+        txtNotesFinales = new JTextArea(4, 20);
+        txtNotesFinales.setLineWrap(true);
+        txtNotesFinales.setWrapStyleWord(true);
+        txtNotesFinales.setBorder(BorderFactory.createLoweredBevelBorder());
+        JScrollPane scrollNotes = new JScrollPane(txtNotesFinales);
+        notesPanel.add(scrollNotes, BorderLayout.CENTER);
+        mainPanel.add(notesPanel, gbc);
         
         // Panel droit: Actions
+        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.BOTH; gbc.weightx = 0.3; gbc.weighty = 0.5;
         JPanel rightPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        GridBagConstraints gbcRight = new GridBagConstraints();
+        gbcRight.insets = new Insets(5, 5, 5, 5);
+        gbcRight.fill = GridBagConstraints.HORIZONTAL;
         
         // Statut validation
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbcRight.gridx = 0; gbcRight.gridy = 0;
         lblStatutValidation = new JLabel("⏳ En attente...", JLabel.CENTER);
         lblStatutValidation.setFont(lblStatutValidation.getFont().deriveFont(Font.BOLD, 14f));
-        rightPanel.add(lblStatutValidation, gbc);
+        rightPanel.add(lblStatutValidation, gbcRight);
         
         // Boutons d'action
-        gbc.gridy = 1;
+        gbcRight.gridy = 1;
         JButton btnSauvegarder = new JButton("💾 Créer l'Affectation");
         btnSauvegarder.setBackground(new Color(46, 204, 113));
         btnSauvegarder.setForeground(Color.WHITE);
         btnSauvegarder.setFont(btnSauvegarder.getFont().deriveFont(Font.BOLD));
         btnSauvegarder.addActionListener(e -> sauvegarderAffectation());
-        rightPanel.add(btnSauvegarder, gbc);
+        rightPanel.add(btnSauvegarder, gbcRight);
         
-        gbc.gridy = 2;
+        gbcRight.gridy = 2;
         JButton btnReset = new JButton("🔄 Réinitialiser");
         btnReset.setBackground(new Color(231, 76, 60));
         btnReset.setForeground(Color.WHITE);
         btnReset.addActionListener(e -> reinitialiserFormulaire());
-        rightPanel.add(btnReset, gbc);
+        rightPanel.add(btnReset, gbcRight);
         
-        // Assemblage
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(leftPanel, BorderLayout.CENTER);
-        mainPanel.add(rightPanel, BorderLayout.EAST);
+        mainPanel.add(rightPanel, gbc);
         
         panel.add(mainPanel, BorderLayout.CENTER);
         return panel;

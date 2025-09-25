@@ -12,6 +12,7 @@ import nexus_bmb_soft.utils.IconUtils;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,10 +36,7 @@ public class FormNouvelleAffectation extends JPanel {
     private VehiculeDAO vehiculeDAO;
     private UtilisateurDAO utilisateurDAO;
     
-    // Onglets
-    private JTabbedPane tabbedPane;
-    
-    // === ONGLET SÉLECTION ===
+    // === COMPOSANTS DE L'INTERFACE ===
     private JComboBox<VehiculeItem> cmbVehicule;
     private JComboBox<ConducteurItem> cmbConducteur;
     private JLabel lblVehiculeStatut;
@@ -122,35 +120,47 @@ public class FormNouvelleAffectation extends JPanel {
         lblTitrePrincipal.setBackground(new Color(70, 130, 180)); // Style harmonisé
         lblTitrePrincipal.setForeground(Color.WHITE);
         
-        // Créer les onglets avec le design harmonisé
-        tabbedPane = new JTabbedPane();
-        
-        // Onglet 1: Sélection (Véhicule + Conducteur)
-        JPanel panelSelection = createSelectionPanel();
-        tabbedPane.addTab(" Sélection", IconUtils.createCarIcon(new Color(52, 152, 219), 16), panelSelection);
-        
-        // Onglet 2: Planning (Dates + Motif)
-        JPanel panelPlanning = createPlanningPanel();
-        tabbedPane.addTab(" Planning", IconUtils.createCalendarIcon(new Color(46, 204, 113), 16), panelPlanning);
-        
-        // Onglet 3: Validation (Récapitulatif + Sauvegarde)
-        JPanel panelValidation = createValidationPanel();
-        tabbedPane.addTab(" Validation", IconUtils.createSaveIcon(new Color(155, 89, 182), 16), panelValidation);
-        
-        // Listener pour valider automatiquement lors du changement d'onglet
-        tabbedPane.addChangeListener(e -> {
-            int selectedIndex = tabbedPane.getSelectedIndex();
-            if (selectedIndex == 2) { // Onglet Validation
-                mettreAJourRecapitulatif();
-            } else if (selectedIndex == 1) { // Onglet Planning
-                verifierDisponibilite();
-            }
-        });
+        // Panel de contenu unique sans onglets
+        JPanel contentPanel = createUnifiedContentPanel();
         
         mainPanel.add(lblTitrePrincipal, BorderLayout.NORTH);
-        mainPanel.add(tabbedPane, BorderLayout.CENTER);
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
         
         add(mainPanel, BorderLayout.CENTER);
+    }
+    
+    /**
+     * Crée le panel de contenu unifié sans onglets
+     */
+    private JPanel createUnifiedContentPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
+        // Panel central avec toutes les sections
+        JPanel centralPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        // Section 1: Sélection Véhicule et Conducteur
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0; gbc.weighty = 0.3;
+        gbc.insets = new Insets(0, 0, 15, 0);
+        centralPanel.add(createSelectionSection(), gbc);
+        
+        // Section 2: Planning et Dates
+        gbc.gridy = 1;
+        gbc.weighty = 0.4;
+        centralPanel.add(createPlanningSection(), gbc);
+        
+        // Section 3: Validation et Actions
+        gbc.gridy = 2;
+        gbc.weighty = 0.3;
+        gbc.insets = new Insets(15, 0, 0, 0);
+        centralPanel.add(createValidationSection(), gbc);
+        
+        panel.add(centralPanel, BorderLayout.CENTER);
+        
+        return panel;
     }
     
     private JPanel createSelectionPanel() {
@@ -478,11 +488,8 @@ public class FormNouvelleAffectation extends JPanel {
     }
     
     private void mettreAJourCompteurs(List<Vehicule> vehicules, List<Utilisateur> conducteurs) {
-        long vehiculesDisponibles = vehicules.stream().filter(Vehicule::isDisponible).count();
-        long conducteursActifs = conducteurs.size();
-        
-        Component[] components = ((JPanel)tabbedPane.getComponentAt(0)).getComponents();
-        // Logique pour mettre à jour les labels de compteur (code simplifié)
+        // Les compteurs sont maintenant intégrés directement dans l'interface
+        // Cette méthode peut être supprimée
     }
     
     private void verifierStatutVehicule() {
@@ -643,7 +650,6 @@ public class FormNouvelleAffectation extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
                 
                 reinitialiserFormulaire();
-                tabbedPane.setSelectedIndex(0); // Retour au premier onglet
             } else {
                 JOptionPane.showMessageDialog(this, 
                     "❌ Erreur lors de la création de l'affectation", 
@@ -682,6 +688,228 @@ public class FormNouvelleAffectation extends JPanel {
         modelRecap.setRowCount(0);
     }
     
+    /**
+     * Crée la section de sélection véhicule et conducteur
+     */
+    private JPanel createSelectionSection() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(new Color(52, 152, 219), 2),
+            "🚗👤 Sélection Véhicule et Conducteur",
+            TitledBorder.LEFT,
+            TitledBorder.TOP
+        ));
+        
+        // Panel du formulaire
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        
+        // Ligne véhicule
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.WEST;
+        JLabel lblVehicule = new JLabel("Véhicule:");
+        lblVehicule.setFont(lblVehicule.getFont().deriveFont(Font.BOLD));
+        formPanel.add(lblVehicule, gbc);
+        
+        gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+        cmbVehicule = new JComboBox<>();
+        cmbVehicule.setPreferredSize(new Dimension(400, 30));
+        cmbVehicule.addActionListener(e -> verifierStatutVehicule());
+        formPanel.add(cmbVehicule, gbc);
+        
+        gbc.gridx = 2; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0.0;
+        lblVehiculeStatut = new JLabel();
+        formPanel.add(lblVehiculeStatut, gbc);
+        
+        // Ligne conducteur
+        gbc.gridx = 0; gbc.gridy = 1; gbc.anchor = GridBagConstraints.WEST;
+        JLabel lblConducteur = new JLabel("Conducteur:");
+        lblConducteur.setFont(lblConducteur.getFont().deriveFont(Font.BOLD));
+        formPanel.add(lblConducteur, gbc);
+        
+        gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+        cmbConducteur = new JComboBox<>();
+        cmbConducteur.setPreferredSize(new Dimension(400, 30));
+        cmbConducteur.addActionListener(e -> verifierStatutConducteur());
+        formPanel.add(cmbConducteur, gbc);
+        
+        gbc.gridx = 2; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0.0;
+        lblConducteurStatut = new JLabel();
+        formPanel.add(lblConducteurStatut, gbc);
+        
+        // Panel d'informations à droite
+        gbc.gridx = 3; gbc.gridy = 0; gbc.gridheight = 2;
+        gbc.fill = GridBagConstraints.BOTH; gbc.weightx = 0.3;
+        JPanel infoPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        infoPanel.setBorder(BorderFactory.createTitledBorder("ℹ️ Informations"));
+        
+        JLabel lblVehiculesDispos = new JLabel("Véhicules disponibles: 0");
+        lblVehiculesDispos.setForeground(new Color(46, 204, 113));
+        infoPanel.add(lblVehiculesDispos);
+        
+        JLabel lblConducteursActifs = new JLabel("Conducteurs actifs: 0");
+        lblConducteursActifs.setForeground(new Color(52, 152, 219));
+        infoPanel.add(lblConducteursActifs);
+        
+        formPanel.add(infoPanel, gbc);
+        
+        panel.add(formPanel, BorderLayout.CENTER);
+        return panel;
+    }
+    
+    /**
+     * Crée la section de planning des dates
+     */
+    private JPanel createPlanningSection() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(new Color(46, 204, 113), 2),
+            "📅 Planning et Période d'Affectation",
+            TitledBorder.LEFT,
+            TitledBorder.TOP
+        ));
+        
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        
+        // Date de début
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.WEST;
+        JLabel lblDateDebut = new JLabel("Date de début:");
+        lblDateDebut.setFont(lblDateDebut.getFont().deriveFont(Font.BOLD));
+        formPanel.add(lblDateDebut, gbc);
+        
+        gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL;
+        spnDateDebut = new JSpinner(new SpinnerDateModel());
+        spnDateDebut.setEditor(new JSpinner.DateEditor(spnDateDebut, "dd/MM/yyyy"));
+        spnDateDebut.addChangeListener(e -> calculerDuree());
+        formPanel.add(spnDateDebut, gbc);
+        
+        // Date de fin
+        gbc.gridx = 0; gbc.gridy = 1;
+        JLabel lblDateFin = new JLabel("Date de fin:");
+        lblDateFin.setFont(lblDateFin.getFont().deriveFont(Font.BOLD));
+        formPanel.add(lblDateFin, gbc);
+        
+        gbc.gridx = 1;
+        spnDateFin = new JSpinner(new SpinnerDateModel());
+        spnDateFin.setEditor(new JSpinner.DateEditor(spnDateFin, "dd/MM/yyyy"));
+        spnDateFin.addChangeListener(e -> calculerDuree());
+        formPanel.add(spnDateFin, gbc);
+        
+        // Checkbox affectation ouverte
+        gbc.gridx = 2; gbc.gridy = 1;
+        chkAffectationOuverte = new JCheckBox("Affectation ouverte");
+        chkAffectationOuverte.addActionListener(e -> {
+            spnDateFin.setEnabled(!chkAffectationOuverte.isSelected());
+            calculerDuree();
+        });
+        formPanel.add(chkAffectationOuverte, gbc);
+        
+        // Motif
+        gbc.gridx = 0; gbc.gridy = 2;
+        JLabel lblMotif = new JLabel("Motif:");
+        lblMotif.setFont(lblMotif.getFont().deriveFont(Font.BOLD));
+        formPanel.add(lblMotif, gbc);
+        
+        gbc.gridx = 1; gbc.gridwidth = 2;
+        txtMotif = new JTextArea(2, 30);
+        txtMotif.setLineWrap(true);
+        txtMotif.setWrapStyleWord(true);
+        JScrollPane scrollMotif = new JScrollPane(txtMotif);
+        formPanel.add(scrollMotif, gbc);
+        
+        // Panel de validation à droite
+        gbc.gridx = 3; gbc.gridy = 0; gbc.gridheight = 3; gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.BOTH; gbc.weightx = 0.3;
+        JPanel validationPanel = new JPanel(new GridLayout(4, 1, 5, 5));
+        validationPanel.setBorder(BorderFactory.createTitledBorder("✅ Vérifications"));
+        
+        btnVerifierDisponibilite = new JButton("🔍 Vérifier Disponibilité");
+        btnVerifierDisponibilite.setBackground(new Color(52, 152, 219));
+        btnVerifierDisponibilite.setForeground(Color.WHITE);
+        btnVerifierDisponibilite.addActionListener(e -> verifierDisponibilite());
+        validationPanel.add(btnVerifierDisponibilite);
+        
+        lblDureeCalculee = new JLabel("Durée: Non calculée");
+        lblDureeCalculee.setForeground(new Color(155, 89, 182));
+        validationPanel.add(lblDureeCalculee);
+        
+        lblConflitsDetectes = new JLabel("Conflits: Non vérifiés");
+        lblConflitsDetectes.setForeground(Color.GRAY);
+        validationPanel.add(lblConflitsDetectes);
+        
+        formPanel.add(validationPanel, gbc);
+        
+        panel.add(formPanel, BorderLayout.CENTER);
+        return panel;
+    }
+    
+    /**
+     * Crée la section de validation et sauvegarde
+     */
+    private JPanel createValidationSection() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(new Color(155, 89, 182), 2),
+            "✅ Validation et Sauvegarde",
+            TitledBorder.LEFT,
+            TitledBorder.TOP
+        ));
+        
+        // Panel gauche: Récapitulatif
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setBorder(BorderFactory.createTitledBorder("📋 Récapitulatif"));
+        
+        // Table récapitulative
+        String[] columns = {"Élément", "Valeur"};
+        modelRecap = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        JTable tableRecap = new JTable(modelRecap);
+        tableRecap.setRowHeight(25);
+        JScrollPane scrollRecap = new JScrollPane(tableRecap);
+        scrollRecap.setPreferredSize(new Dimension(400, 150));
+        leftPanel.add(scrollRecap, BorderLayout.CENTER);
+        
+        // Panel droit: Actions
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        
+        // Statut validation
+        gbc.gridx = 0; gbc.gridy = 0;
+        lblStatutValidation = new JLabel("⏳ En attente...", JLabel.CENTER);
+        lblStatutValidation.setFont(lblStatutValidation.getFont().deriveFont(Font.BOLD, 14f));
+        rightPanel.add(lblStatutValidation, gbc);
+        
+        // Boutons d'action
+        gbc.gridy = 1;
+        JButton btnSauvegarder = new JButton("💾 Créer l'Affectation");
+        btnSauvegarder.setBackground(new Color(46, 204, 113));
+        btnSauvegarder.setForeground(Color.WHITE);
+        btnSauvegarder.setFont(btnSauvegarder.getFont().deriveFont(Font.BOLD));
+        btnSauvegarder.addActionListener(e -> sauvegarderAffectation());
+        rightPanel.add(btnSauvegarder, gbc);
+        
+        gbc.gridy = 2;
+        JButton btnReset = new JButton("🔄 Réinitialiser");
+        btnReset.setBackground(new Color(231, 76, 60));
+        btnReset.setForeground(Color.WHITE);
+        btnReset.addActionListener(e -> reinitialiserFormulaire());
+        rightPanel.add(btnReset, gbc);
+        
+        // Assemblage
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(leftPanel, BorderLayout.CENTER);
+        mainPanel.add(rightPanel, BorderLayout.EAST);
+        
+        panel.add(mainPanel, BorderLayout.CENTER);
+        return panel;
+    }
+
     // Utilitaires
     private LocalDate convertToLocalDate(Date date) {
         return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();

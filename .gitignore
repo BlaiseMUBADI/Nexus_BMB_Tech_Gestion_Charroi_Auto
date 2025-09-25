@@ -1,3 +1,69 @@
+# NetBeans
 /build/
 /nbproject/private/
 /dist/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+# Fichiers compilés Java
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Fichiers système
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Fichiers de log
+*.log
+*.out
+
+# Fichiers temporaires
+*~
+*.tmp
+*.temp
+.cache/
+
+# Base de données locales
+*.db
+*.sqlite
+*.sqlite3
+
+# Fichiers de configuration sensibles
+config.properties
+database.properties
+secrets.properties

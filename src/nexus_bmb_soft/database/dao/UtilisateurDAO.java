@@ -586,7 +586,7 @@ public class UtilisateurDAO {
         
         String sql = "SELECT u.* FROM utilisateur u " +
                     "LEFT JOIN affectation a ON u.id = a.conducteur_id AND a.statut = 'en_cours' " +
-                    "WHERE u.role IN ('CONDUCTEUR', 'CONDUCTEUR_SENIOR') " +
+                    "WHERE u.role IN ('conducteur', 'conducteur_senior') " +
                     "AND u.statut = 'ACTIF' " +
                     "AND a.conducteur_id IS NULL " +
                     "ORDER BY u.nom";

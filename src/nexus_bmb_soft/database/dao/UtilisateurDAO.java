@@ -28,20 +28,48 @@ public class UtilisateurDAO {
      */
     private void initializeTable() {
         try {
+            // D'abord, créer la table de base si elle n'existe pas
             String createTableSQL = "CREATE TABLE IF NOT EXISTS utilisateur (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY," +
                 "nom VARCHAR(100) NOT NULL," +
-                "prenom VARCHAR(100) NOT NULL," +
-                "email VARCHAR(255) UNIQUE NOT NULL," +
                 "role ENUM('CONDUCTEUR', 'CONDUCTEUR_SENIOR', 'GESTIONNAIRE', 'ADMIN', 'SUPER_ADMIN') NOT NULL," +
-                "statut ENUM('ACTIF', 'INACTIF', 'SUSPENDU') DEFAULT 'ACTIF'," +
-                "mot_de_passe_hash VARCHAR(255) NOT NULL," +
-                "date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                "date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" +
+                "mot_de_passe_hash VARCHAR(255) NOT NULL" +
                 ")";
             
             Statement stmt = connection.createStatement();
             stmt.executeUpdate(createTableSQL);
+            
+            // Ensuite, essayer d'ajouter les nouvelles colonnes si elles n'existent pas
+            try {
+                stmt.executeUpdate("ALTER TABLE utilisateur ADD COLUMN prenom VARCHAR(100) DEFAULT ''");
+                System.out.println("Colonne 'prenom' ajoutée à la table utilisateur.");
+            } catch (SQLException e) {
+                // La colonne existe déjà ou erreur, continuer
+            }
+            
+            try {
+                stmt.executeUpdate("ALTER TABLE utilisateur ADD COLUMN email VARCHAR(255) DEFAULT ''");
+                System.out.println("Colonne 'email' ajoutée à la table utilisateur.");
+            } catch (SQLException e) {
+                // La colonne existe déjà ou erreur, continuer
+            }
+            
+            try {
+                stmt.executeUpdate("ALTER TABLE utilisateur ADD COLUMN statut ENUM('ACTIF', 'INACTIF', 'SUSPENDU') DEFAULT 'ACTIF'");
+                System.out.println("Colonne 'statut' ajoutée à la table utilisateur.");
+            } catch (SQLException e) {
+                // La colonne existe déjà ou erreur, continuer
+            }
+            
+            try {
+                stmt.executeUpdate("ALTER TABLE utilisateur ADD COLUMN date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+                System.out.println("Colonne 'date_creation' ajoutée à la table utilisateur.");
+            } catch (SQLException e) {
+                // La colonne existe déjà ou erreur, continuer
+            }
+            
+            // Vérifier quelles colonnes existent réellement
+            checkAvailableColumns();
             
             // Insérer des données de test si la table est vide
             String countSQL = "SELECT COUNT(*) FROM utilisateur";
@@ -57,25 +85,92 @@ public class UtilisateurDAO {
         }
     }
     
+    // Variables pour suivre les colonnes disponibles
+    private boolean hasPrenom = false;
+    private boolean hasEmail = false;
+    private boolean hasStatut = false;
+    private boolean hasDateCreation = false;
+    
+    /**
+     * Vérifie quelles colonnes sont disponibles dans la table
+     */
+    private void checkAvailableColumns() {
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet columns = metaData.getColumns(null, null, "utilisateur", null);
+            
+            while (columns.next()) {
+                String columnName = columns.getString("COLUMN_NAME").toLowerCase();
+                switch (columnName) {
+                    case "prenom":
+                        hasPrenom = true;
+                        break;
+                    case "email":
+                        hasEmail = true;
+                        break;
+                    case "statut":
+                        hasStatut = true;
+                        break;
+                    case "date_creation":
+                        hasDateCreation = true;
+                        break;
+                }
+            }
+            
+            System.out.println("Colonnes disponibles - prenom: " + hasPrenom + ", email: " + hasEmail + 
+                             ", statut: " + hasStatut + ", date_creation: " + hasDateCreation);
+            
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la vérification des colonnes: " + e.getMessage());
+        }
+    }
+    
     /**
      * Insère des données de test
      */
     private void insertTestData() {
         try {
-            String insertSQL = "INSERT INTO utilisateur (nom, prenom, email, role, statut, mot_de_passe_hash) VALUES " +
-                "('MUBADI', 'Blaise', 'blaise.mubadi@charroi.cd', 'SUPER_ADMIN', 'ACTIF', 'admin123'), " +
-                "('KABAMBA', 'Jean', 'jean.kabamba@charroi.cd', 'GESTIONNAIRE', 'ACTIF', 'gest123'), " +
-                "('MUKENDI', 'Marie', 'marie.mukendi@charroi.cd', 'GESTIONNAIRE', 'ACTIF', 'gest123'), " +
-                "('TSHILOMBO', 'Pierre', 'pierre.tshilombo@charroi.cd', 'CONDUCTEUR_SENIOR', 'ACTIF', 'cond123'), " +
-                "('KASONGO', 'Paul', 'paul.kasongo@charroi.cd', 'CONDUCTEUR', 'ACTIF', 'cond123'), " +
-                "('MULAMBA', 'Céline', 'celine.mulamba@charroi.cd', 'CONDUCTEUR', 'ACTIF', 'cond123'), " +
-                "('ILUNGA', 'Joseph', 'joseph.ilunga@charroi.cd', 'CONDUCTEUR', 'INACTIF', 'cond123'), " +
-                "('KAPEND', 'Sylvie', 'sylvie.kapend@charroi.cd', 'CONDUCTEUR_SENIOR', 'ACTIF', 'cond123'), " +
-                "('MWANANGA', 'Daniel', 'daniel.mwananga@charroi.cd', 'ADMIN', 'ACTIF', 'admin123'), " +
-                "('BAKAJIKA', 'Françoise', 'francoise.bakajika@charroi.cd', 'CONDUCTEUR', 'SUSPENDU', 'cond123')";
+            // Construire la requête selon les colonnes disponibles
+            StringBuilder insertSQL = new StringBuilder("INSERT INTO utilisateur (nom, role, mot_de_passe_hash");
+            StringBuilder valuesSQL = new StringBuilder("VALUES ");
             
+            if (hasPrenom) insertSQL.append(", prenom");
+            if (hasEmail) insertSQL.append(", email");
+            if (hasStatut) insertSQL.append(", statut");
+            if (hasDateCreation) insertSQL.append(", date_creation");
+            
+            insertSQL.append(") ");
+            
+            // Données de base pour tous les utilisateurs
+            String[][] userData = {
+                {"MUBADI Blaise", "SUPER_ADMIN", "admin123", "Blaise", "blaise.mubadi@charroi.cd", "ACTIF"},
+                {"KABAMBA Jean", "GESTIONNAIRE", "gest123", "Jean", "jean.kabamba@charroi.cd", "ACTIF"},
+                {"MUKENDI Marie", "GESTIONNAIRE", "gest123", "Marie", "marie.mukendi@charroi.cd", "ACTIF"},
+                {"TSHILOMBO Pierre", "CONDUCTEUR_SENIOR", "cond123", "Pierre", "pierre.tshilombo@charroi.cd", "ACTIF"},
+                {"KASONGO Paul", "CONDUCTEUR", "cond123", "Paul", "paul.kasongo@charroi.cd", "ACTIF"},
+                {"MULAMBA Céline", "CONDUCTEUR", "cond123", "Céline", "celine.mulamba@charroi.cd", "ACTIF"},
+                {"ILUNGA Joseph", "CONDUCTEUR", "cond123", "Joseph", "joseph.ilunga@charroi.cd", "INACTIF"},
+                {"KAPEND Sylvie", "CONDUCTEUR_SENIOR", "cond123", "Sylvie", "sylvie.kapend@charroi.cd", "ACTIF"}
+            };
+            
+            for (int i = 0; i < userData.length; i++) {
+                if (i > 0) valuesSQL.append(", ");
+                
+                valuesSQL.append("('").append(userData[i][0]).append("', '")
+                         .append(userData[i][1]).append("', '")
+                         .append(userData[i][2]).append("'");
+                
+                if (hasPrenom) valuesSQL.append(", '").append(userData[i][3]).append("'");
+                if (hasEmail) valuesSQL.append(", '").append(userData[i][4]).append("'");
+                if (hasStatut) valuesSQL.append(", '").append(userData[i][5]).append("'");
+                if (hasDateCreation) valuesSQL.append(", NOW()");
+                
+                valuesSQL.append(")");
+            }
+            
+            String finalSQL = insertSQL.toString() + valuesSQL.toString();
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate(insertSQL);
+            stmt.executeUpdate(finalSQL);
             System.out.println("Données de test insérées dans la table utilisateur.");
             
         } catch (SQLException e) {
@@ -139,10 +234,19 @@ public class UtilisateurDAO {
      */
     public List<Utilisateur> lireTous() {
         List<Utilisateur> utilisateurs = new ArrayList<>();
-        String sql = "SELECT * FROM utilisateur ORDER BY nom, prenom";
+        
+        // Construire la requête selon les colonnes disponibles
+        StringBuilder sql = new StringBuilder("SELECT id, nom, role, mot_de_passe_hash");
+        if (hasPrenom) sql.append(", prenom");
+        if (hasEmail) sql.append(", email");  
+        if (hasStatut) sql.append(", statut");
+        if (hasDateCreation) sql.append(", date_creation");
+        
+        sql.append(" FROM utilisateur ORDER BY nom");
+        if (hasPrenom) sql.append(", prenom");
         
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(sql.toString())) {
             
             while (rs.next()) {
                 utilisateurs.add(mapResultSetToUtilisateur(rs));
@@ -304,15 +408,61 @@ public class UtilisateurDAO {
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setId(rs.getInt("id"));
         utilisateur.setNom(rs.getString("nom"));
-        utilisateur.setPrenom(rs.getString("prenom"));
-        utilisateur.setEmail(rs.getString("email"));
         utilisateur.setRole(RoleUtilisateur.valueOf(rs.getString("role")));
-        utilisateur.setStatut(rs.getString("statut"));
         utilisateur.setMotDePasseHash(rs.getString("mot_de_passe_hash"));
         
-        Timestamp dateCreation = rs.getTimestamp("date_creation");
-        if (dateCreation != null) {
-            utilisateur.setDateCreation(dateCreation.toLocalDateTime());
+        // Colonnes optionnelles
+        if (hasPrenom) {
+            try {
+                utilisateur.setPrenom(rs.getString("prenom"));
+            } catch (SQLException e) {
+                utilisateur.setPrenom(""); // Valeur par défaut
+            }
+        } else {
+            // Extraire le prénom du nom si possible (MUBADI Blaise -> Blaise)
+            String nom = utilisateur.getNom();
+            if (nom != null && nom.contains(" ")) {
+                String[] parties = nom.split(" ");
+                if (parties.length >= 2) {
+                    utilisateur.setPrenom(parties[parties.length - 1]); // Dernier mot
+                    utilisateur.setNom(parties[0]); // Premier mot
+                }
+            } else {
+                utilisateur.setPrenom("");
+            }
+        }
+        
+        if (hasEmail) {
+            try {
+                utilisateur.setEmail(rs.getString("email"));
+            } catch (SQLException e) {
+                utilisateur.setEmail("");
+            }
+        } else {
+            utilisateur.setEmail("");
+        }
+        
+        if (hasStatut) {
+            try {
+                utilisateur.setStatut(rs.getString("statut"));
+            } catch (SQLException e) {
+                utilisateur.setStatut("ACTIF");
+            }
+        } else {
+            utilisateur.setStatut("ACTIF");
+        }
+        
+        if (hasDateCreation) {
+            try {
+                Timestamp dateCreation = rs.getTimestamp("date_creation");
+                if (dateCreation != null) {
+                    utilisateur.setDateCreation(dateCreation.toLocalDateTime());
+                }
+            } catch (SQLException e) {
+                utilisateur.setDateCreation(LocalDateTime.now());
+            }
+        } else {
+            utilisateur.setDateCreation(LocalDateTime.now());
         }
         
         return utilisateur;

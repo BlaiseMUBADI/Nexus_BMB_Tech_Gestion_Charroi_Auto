@@ -23,6 +23,7 @@ public class FormGestionUtilisateurs extends JPanel {
     // Components pour l'ajout
     private JTextField txtNom;
     private JTextField txtPrenom;
+    private JTextField txtMatricule;
     private JTextField txtEmail;
     private JComboBox<String> cmbRole;
     private JPasswordField txtMotDePasse;
@@ -55,7 +56,7 @@ public class FormGestionUtilisateurs extends JPanel {
     
     // Colonnes du tableau utilisateurs
     private final String[] COLONNES_USERS = {
-        "ID", "Nom", "Prénom", "Email", "Rôle", "Statut", "Date Création"
+        "ID", "Nom", "Prénom", "Matricule", "Email", "Rôle", "Statut", "Date Création"
     };
     
     // Colonnes du tableau rôles
@@ -180,17 +181,25 @@ public class FormGestionUtilisateurs extends JPanel {
         txtPrenom.setFont(txtPrenom.getFont().deriveFont(12f));
         panelChamps.add(txtPrenom, gbc);
         
-        // Ligne 2: Email + Rôle
+        // Ligne 2: Matricule + Email
         gbc.gridx = 0; gbc.gridy = 1;
-        panelChamps.add(new JLabel(" Email :", IconUtils.createListIcon(new Color(230, 126, 34), 16), JLabel.LEFT), gbc);
+        panelChamps.add(new JLabel(" Matricule :", IconUtils.createCarIcon(new Color(155, 89, 182), 16), JLabel.LEFT), gbc);
         gbc.gridx = 1;
+        txtMatricule = new JTextField(15);
+        txtMatricule.setFont(txtMatricule.getFont().deriveFont(12f));
+        panelChamps.add(txtMatricule, gbc);
+        
+        gbc.gridx = 2;
+        panelChamps.add(new JLabel(" Email :", IconUtils.createListIcon(new Color(230, 126, 34), 16), JLabel.LEFT), gbc);
+        gbc.gridx = 3;
         txtEmail = new JTextField(15);
         txtEmail.setFont(txtEmail.getFont().deriveFont(12f));
         panelChamps.add(txtEmail, gbc);
         
-        gbc.gridx = 2;
+        // Ligne 3: Rôle + Statut
+        gbc.gridx = 0; gbc.gridy = 2;
         panelChamps.add(new JLabel(" Rôle :", IconUtils.createCalendarIcon(new Color(155, 89, 182), 16), JLabel.LEFT), gbc);
-        gbc.gridx = 3;
+        gbc.gridx = 1;
         if (typeUtilisateur.equals("CONDUCTEUR")) {
             cmbRole = new JComboBox<>(new String[]{"CONDUCTEUR", "CONDUCTEUR_SENIOR"});
         } else {
@@ -199,8 +208,15 @@ public class FormGestionUtilisateurs extends JPanel {
         cmbRole.setFont(cmbRole.getFont().deriveFont(12f));
         panelChamps.add(cmbRole, gbc);
         
+        gbc.gridx = 2;
+        panelChamps.add(new JLabel(" Statut :", IconUtils.createRefreshIcon(new Color(52, 152, 219), 16), JLabel.LEFT), gbc);
+        gbc.gridx = 3;
+        cmbStatut = new JComboBox<>(new String[]{"ACTIF", "INACTIF", "SUSPENDU"});
+        cmbStatut.setFont(cmbStatut.getFont().deriveFont(12f));
+        panelChamps.add(cmbStatut, gbc);
+        
         // Ligne 3: Mot de passe + Confirmation
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         panelChamps.add(new JLabel(" Mot de passe :", IconUtils.createSaveIcon(new Color(231, 76, 60), 16), JLabel.LEFT), gbc);
         gbc.gridx = 1;
         txtMotDePasse = new JPasswordField(15);
@@ -213,15 +229,6 @@ public class FormGestionUtilisateurs extends JPanel {
         txtConfirmation = new JPasswordField(15);
         txtConfirmation.setFont(txtConfirmation.getFont().deriveFont(12f));
         panelChamps.add(txtConfirmation, gbc);
-        
-        // Ligne 4: Statut
-        gbc.gridx = 0; gbc.gridy = 3;
-        panelChamps.add(new JLabel(" Statut :", IconUtils.createRefreshIcon(new Color(52, 152, 219), 16), JLabel.LEFT), gbc);
-        gbc.gridx = 1;
-        cmbStatut = new JComboBox<>(new String[]{"ACTIF", "INACTIF", "SUSPENDU"});
-        cmbStatut.setFont(cmbStatut.getFont().deriveFont(12f));
-        cmbStatut.setSelectedItem("ACTIF");
-        panelChamps.add(cmbStatut, gbc);
         
         panel.add(panelChamps, BorderLayout.CENTER);
         
@@ -474,6 +481,7 @@ public class FormGestionUtilisateurs extends JPanel {
             Utilisateur utilisateur = new Utilisateur();
             utilisateur.setNom(txtNom.getText().trim());
             utilisateur.setPrenom(txtPrenom.getText().trim());
+            utilisateur.setMatricule(txtMatricule.getText().trim());
             utilisateur.setEmail(txtEmail.getText().trim().toLowerCase());
             
             // Convertir le rôle String en RoleUtilisateur
@@ -511,6 +519,7 @@ public class FormGestionUtilisateurs extends JPanel {
     private void reinitialiserFormulaire() {
         txtNom.setText("");
         txtPrenom.setText("");
+        txtMatricule.setText("");
         txtEmail.setText("");
         txtMotDePasse.setText("");
         txtConfirmation.setText("");
@@ -533,6 +542,7 @@ public class FormGestionUtilisateurs extends JPanel {
                     user.getId(),
                     user.getNom(),
                     user.getPrenom(),
+                    user.getMatricule() != null ? user.getMatricule() : "N/A",
                     user.getEmail(),
                     user.getRole().name(), // Utiliser .name() pour obtenir la String
                     user.getStatut(),

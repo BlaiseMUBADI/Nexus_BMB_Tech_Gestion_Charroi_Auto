@@ -13,6 +13,7 @@ public class Utilisateur {
     private int id;
     private String nom;
     private String prenom;
+    private String matricule;
     private String email;
     private RoleUtilisateur role;
     private String statut; // ACTIF, INACTIF, SUSPENDU
@@ -67,6 +68,14 @@ public class Utilisateur {
     
     public void setPrenom(String prenom) {
         this.prenom = prenom;
+    }
+    
+    public String getMatricule() {
+        return matricule;
+    }
+    
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
     }
     
     public String getEmail() {

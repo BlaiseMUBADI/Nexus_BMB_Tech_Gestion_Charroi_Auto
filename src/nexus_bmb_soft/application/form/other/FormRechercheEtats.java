@@ -5,7 +5,6 @@ import nexus_bmb_soft.models.Vehicule;
 import nexus_bmb_soft.utils.IconUtils;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
@@ -48,13 +47,19 @@ public class FormRechercheEtats extends JPanel {
     
     private void initComponents() {
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
         
-        // Titre principal
-        JLabel lblTitre = new JLabel("Recherche & États des Véhicules", IconUtils.createSearchIcon(new Color(52, 152, 219), 24), JLabel.LEFT);
-        lblTitre.setFont(new Font("Arial", Font.BOLD, 18));
-        lblTitre.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-        add(lblTitre, BorderLayout.NORTH);
+        // Panel principal avec bordure
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+        
+        // Titre principal avec style uniforme
+        JLabel lblTitrePrincipal = new JLabel(" 🔍 Recherche & États des Véhicules", JLabel.CENTER);
+        lblTitrePrincipal.setFont(new Font("Arial", Font.BOLD, 18));
+        lblTitrePrincipal.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+        lblTitrePrincipal.setOpaque(true);
+        lblTitrePrincipal.setBackground(new Color(70, 130, 180));
+        lblTitrePrincipal.setForeground(Color.WHITE);
+        mainPanel.add(lblTitrePrincipal, BorderLayout.NORTH);
         
         // Panel principal avec onglets
         tabbedPane = new JTabbedPane();
@@ -68,25 +73,17 @@ public class FormRechercheEtats extends JPanel {
         JPanel panelEtats = createPanelEtats();
         tabbedPane.addTab(" États & Disponibilité", IconUtils.createListIcon(new Color(46, 204, 113), 16), panelEtats);
         
-        add(tabbedPane, BorderLayout.CENTER);
+        mainPanel.add(tabbedPane, BorderLayout.CENTER);
+        add(mainPanel, BorderLayout.CENTER);
     }
     
     private JPanel createPanelRecherche() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         // Panel de critères de recherche
         JPanel panelCriteres = new JPanel(new GridBagLayout());
-        panelCriteres.setBackground(Color.WHITE);
-        panelCriteres.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(52, 152, 219), 2),
-            " Critères de Recherche ",
-            TitledBorder.LEFT,
-            TitledBorder.TOP,
-            new Font("Arial", Font.BOLD, 12),
-            new Color(52, 152, 219)
-        ));
+        panelCriteres.setBorder(BorderFactory.createTitledBorder("📝 Critères de Recherche"));
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
@@ -98,6 +95,10 @@ public class FormRechercheEtats extends JPanel {
         gbc.gridx = 1;
         txtRechercheMatricule = new JTextField(15);
         txtRechercheMatricule.setFont(new Font("Arial", Font.PLAIN, 12));
+        txtRechercheMatricule.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(5, 8, 5, 8)
+        ));
         panelCriteres.add(txtRechercheMatricule, gbc);
         
         // Filtre par marque
@@ -126,7 +127,7 @@ public class FormRechercheEtats extends JPanel {
         
         // Boutons d'action
         JPanel panelBoutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        panelBoutons.setBackground(Color.WHITE);
+        panelBoutons.setBorder(BorderFactory.createTitledBorder("Actions"));
         
         btnRechercher = new JButton(" Rechercher", IconUtils.createSearchIcon(Color.WHITE, 16));
         btnRechercher.setFont(new Font("Arial", Font.BOLD, 12));
@@ -137,7 +138,7 @@ public class FormRechercheEtats extends JPanel {
         
         btnReinitialiser = new JButton(" Réinitialiser", IconUtils.createRefreshIcon(Color.WHITE, 16));
         btnReinitialiser.setFont(new Font("Arial", Font.BOLD, 12));
-        btnReinitialiser.setBackground(new Color(149, 165, 166));
+        btnReinitialiser.setBackground(new Color(255, 165, 0));
         btnReinitialiser.setForeground(Color.WHITE);
         btnReinitialiser.setFocusPainted(false);
         btnReinitialiser.addActionListener(e -> reinitialiserRecherche());
@@ -166,14 +167,7 @@ public class FormRechercheEtats extends JPanel {
         tableResultats.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         
         JScrollPane scrollResultats = new JScrollPane(tableResultats);
-        scrollResultats.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(46, 204, 113), 2),
-            " Résultats de la Recherche ",
-            TitledBorder.LEFT,
-            TitledBorder.TOP,
-            new Font("Arial", Font.BOLD, 12),
-            new Color(46, 204, 113)
-        ));
+        scrollResultats.setBorder(BorderFactory.createTitledBorder("📋 Résultats de la Recherche"));
         
         panel.add(panelCriteres, BorderLayout.NORTH);
         panel.add(scrollResultats, BorderLayout.CENTER);
@@ -183,12 +177,10 @@ public class FormRechercheEtats extends JPanel {
     
     private JPanel createPanelEtats() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         // Panel des statistiques
         JPanel panelStats = new JPanel(new GridLayout(1, 4, 10, 10));
-        panelStats.setBackground(Color.WHITE);
         panelStats.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
         
         // Cartes statistiques
@@ -204,7 +196,7 @@ public class FormRechercheEtats extends JPanel {
         
         // Bouton actualiser
         JPanel panelActualiser = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelActualiser.setBackground(Color.WHITE);
+        panelActualiser.setBorder(BorderFactory.createTitledBorder("Actions"));
         
         btnActualiser = new JButton(" Actualiser", IconUtils.createRefreshIcon(Color.WHITE, 16));
         btnActualiser.setFont(new Font("Arial", Font.BOLD, 12));
@@ -232,17 +224,9 @@ public class FormRechercheEtats extends JPanel {
         tableEtats.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         
         JScrollPane scrollEtats = new JScrollPane(tableEtats);
-        scrollEtats.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(46, 204, 113), 2),
-            " États Détaillés des Véhicules ",
-            TitledBorder.LEFT,
-            TitledBorder.TOP,
-            new Font("Arial", Font.BOLD, 12),
-            new Color(46, 204, 113)
-        ));
+        scrollEtats.setBorder(BorderFactory.createTitledBorder("📊 États Détaillés des Véhicules"));
         
         JPanel panelTop = new JPanel(new BorderLayout());
-        panelTop.setBackground(Color.WHITE);
         panelTop.add(panelStats, BorderLayout.CENTER);
         panelTop.add(panelActualiser, BorderLayout.EAST);
         
@@ -261,8 +245,7 @@ public class FormRechercheEtats extends JPanel {
             BorderFactory.createLineBorder(couleur, 2),
             BorderFactory.createEmptyBorder(15, 10, 15, 10)
         ));
-        card.setBackground(Color.WHITE);
-        card.setOpaque(true);
+        card.setOpaque(false); // Pas de fond fixé pour s'adapter au thème
         return card;
     }
     

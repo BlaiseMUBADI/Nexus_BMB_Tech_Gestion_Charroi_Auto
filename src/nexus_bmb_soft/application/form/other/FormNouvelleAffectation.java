@@ -13,6 +13,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -58,6 +60,10 @@ public class FormNouvelleAffectation extends JPanel {
     private JButton btnSauvegarder;
     private JButton btnReinitialiser;
     private JLabel lblStatutValidation;
+    
+    // === LABELS D'INFORMATION ===
+    private JLabel lblVehiculesDispos;
+    private JLabel lblConducteursActifs;
     
     // Classes helper pour les ComboBox
     private static class VehiculeItem {
@@ -421,8 +427,27 @@ public class FormNouvelleAffectation extends JPanel {
     }
     
     private void mettreAJourCompteurs(List<Vehicule> vehicules, List<Utilisateur> conducteurs) {
-        // Les compteurs sont maintenant intégrés directement dans l'interface
-        // Cette méthode peut être supprimée
+        // Compter les véhicules disponibles
+        long vehiculesDisponibles = vehicules.stream()
+            .filter(Vehicule::isDisponible)
+            .count();
+        
+        // Mettre à jour les labels d'information
+        lblVehiculesDispos.setText("Véhicules disponibles: " + vehiculesDisponibles);
+        lblConducteursActifs.setText("Conducteurs actifs: " + conducteurs.size());
+        
+        // Ajouter des couleurs selon le statut
+        if (vehiculesDisponibles > 0) {
+            lblVehiculesDispos.setForeground(new Color(46, 204, 113)); // Vert
+        } else {
+            lblVehiculesDispos.setForeground(new Color(231, 76, 60)); // Rouge
+        }
+        
+        if (conducteurs.size() > 0) {
+            lblConducteursActifs.setForeground(new Color(52, 152, 219)); // Bleu
+        } else {
+            lblConducteursActifs.setForeground(new Color(231, 76, 60)); // Rouge
+        }
     }
     
     private void verifierStatutVehicule() {
@@ -647,7 +672,10 @@ public class FormNouvelleAffectation extends JPanel {
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
         cmbVehicule = new JComboBox<>();
         cmbVehicule.setPreferredSize(new Dimension(400, 30));
-        cmbVehicule.addActionListener(e -> verifierStatutVehicule());
+        cmbVehicule.addActionListener(e -> {
+            verifierStatutVehicule();
+            mettreAJourRecapitulatif();
+        });
         formPanel.add(cmbVehicule, gbc);
         
         gbc.gridx = 2; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0.0;
@@ -663,7 +691,10 @@ public class FormNouvelleAffectation extends JPanel {
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
         cmbConducteur = new JComboBox<>();
         cmbConducteur.setPreferredSize(new Dimension(400, 30));
-        cmbConducteur.addActionListener(e -> verifierStatutConducteur());
+        cmbConducteur.addActionListener(e -> {
+            verifierStatutConducteur();
+            mettreAJourRecapitulatif();
+        });
         formPanel.add(cmbConducteur, gbc);
         
         gbc.gridx = 2; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0.0;
@@ -676,11 +707,11 @@ public class FormNouvelleAffectation extends JPanel {
         JPanel infoPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         infoPanel.setBorder(BorderFactory.createTitledBorder("ℹ️ Informations"));
         
-        JLabel lblVehiculesDispos = new JLabel("Véhicules disponibles: 0");
+        lblVehiculesDispos = new JLabel("Véhicules disponibles: 0");
         lblVehiculesDispos.setForeground(new Color(46, 204, 113));
         infoPanel.add(lblVehiculesDispos);
         
-        JLabel lblConducteursActifs = new JLabel("Conducteurs actifs: 0");
+        lblConducteursActifs = new JLabel("Conducteurs actifs: 0");
         lblConducteursActifs.setForeground(new Color(52, 152, 219));
         infoPanel.add(lblConducteursActifs);
         
@@ -749,6 +780,11 @@ public class FormNouvelleAffectation extends JPanel {
         txtMotif = new JTextArea(2, 30);
         txtMotif.setLineWrap(true);
         txtMotif.setWrapStyleWord(true);
+        txtMotif.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { mettreAJourRecapitulatif(); }
+            public void removeUpdate(DocumentEvent e) { mettreAJourRecapitulatif(); }
+            public void changedUpdate(DocumentEvent e) { mettreAJourRecapitulatif(); }
+        });
         JScrollPane scrollMotif = new JScrollPane(txtMotif);
         formPanel.add(scrollMotif, gbc);
         

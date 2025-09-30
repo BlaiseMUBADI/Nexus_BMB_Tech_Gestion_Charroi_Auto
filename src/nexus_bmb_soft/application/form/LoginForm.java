@@ -5,8 +5,9 @@ import net.miginfocom.swing.MigLayout;
 import nexus_bmb_soft.application.Application;
 
 /**
- *
- * @author Raven
+ * Formulaire de login
+ * 
+ * @author BlaiseMUBADI
  */
 public class LoginForm extends javax.swing.JPanel {
 

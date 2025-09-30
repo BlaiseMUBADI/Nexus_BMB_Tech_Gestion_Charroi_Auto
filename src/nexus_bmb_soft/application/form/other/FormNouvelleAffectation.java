@@ -1,30 +1,25 @@
 package nexus_bmb_soft.application.form.other;
 
-import nexus_bmb_soft.database.dao.AffectationDAO;
-import nexus_bmb_soft.database.dao.VehiculeDAO;
-import nexus_bmb_soft.database.dao.UtilisateurDAO;
-import nexus_bmb_soft.models.Affectation;
-import nexus_bmb_soft.models.Vehicule;
-import nexus_bmb_soft.models.Utilisateur;
-import nexus_bmb_soft.models.RoleUtilisateur;
-import nexus_bmb_soft.utils.IconUtils;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import nexus_bmb_soft.database.dao.AffectationDAO;
+import nexus_bmb_soft.database.dao.UtilisateurDAO;
+import nexus_bmb_soft.database.dao.VehiculeDAO;
+import nexus_bmb_soft.models.Affectation;
+import nexus_bmb_soft.models.RoleUtilisateur;
+import nexus_bmb_soft.models.Utilisateur;
+import nexus_bmb_soft.models.Vehicule;
 
 /**
  * Interface harmonisée pour créer de nouvelles affectations véhicule-conducteur
@@ -104,16 +99,29 @@ public class FormNouvelleAffectation extends JPanel {
     }
     
     public FormNouvelleAffectation() {
-        affectationDAO = new AffectationDAO();
-        vehiculeDAO = new VehiculeDAO();
-        utilisateurDAO = new UtilisateurDAO();
-        init();
-        chargerDonnees();
-        
-        // Initialiser le récapitulatif après chargement
-        SwingUtilities.invokeLater(() -> {
-            mettreAJourRecapitulatif();
-        });
+        try {
+            affectationDAO = new AffectationDAO();
+            vehiculeDAO = new VehiculeDAO();
+            utilisateurDAO = new UtilisateurDAO();
+            init();
+            chargerDonnees();
+            
+            // Initialiser le récapitulatif après chargement
+            SwingUtilities.invokeLater(() -> {
+                mettreAJourRecapitulatif();
+            });
+        } catch (RuntimeException e) {
+            // Gestion d'erreur pour problème de base de données
+            System.err.println("⚠️ Problème de connexion à la base de données: " + e.getMessage());
+            
+            // Initialiser l'interface même sans base de données
+            init();
+            
+            // Afficher un message à l'utilisateur
+            SwingUtilities.invokeLater(() -> {
+                afficherErreurConnexion();
+            });
+        }
     }
     
     private void init() {
@@ -349,6 +357,12 @@ public class FormNouvelleAffectation extends JPanel {
     }
     
     private void chargerDonnees() {
+        // Vérifier que les DAO sont disponibles (base de données connectée)
+        if (vehiculeDAO == null || utilisateurDAO == null) {
+            System.out.println("⚠️ Impossible de charger les données - Base de données indisponible");
+            return;
+        }
+        
         try {
             // 🎯 RÉCUPÉRER UNIQUEMENT LES ÉLÉMENTS RÉELLEMENT DISPONIBLES
             System.out.println("🔄 Chargement des véhicules et conducteurs disponibles...");
@@ -573,6 +587,16 @@ public class FormNouvelleAffectation extends JPanel {
     }
     
     private void sauvegarderAffectation() {
+        // Vérifier que la base de données est disponible
+        if (affectationDAO == null || vehiculeDAO == null) {
+            JOptionPane.showMessageDialog(this, 
+                "⚠️ Impossible de sauvegarder - Base de données indisponible.\n\n" +
+                "Veuillez vérifier que WAMP Server et MySQL sont démarrés.", 
+                "Erreur de connexion", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         try {
             VehiculeItem vehiculeItem = (VehiculeItem) cmbVehicule.getSelectedItem();
             ConducteurItem conducteurItem = (ConducteurItem) cmbConducteur.getSelectedItem();
@@ -910,5 +934,47 @@ public class FormNouvelleAffectation extends JPanel {
     
     private String formatDate(LocalDate date) {
         return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+    
+    /**
+     * Affiche un message d'erreur convivial lorsque la base de données n'est pas disponible
+     */
+    private void afficherErreurConnexion() {
+        // Désactiver les composants qui nécessitent la base de données
+        if (cmbConducteur != null) {
+            cmbConducteur.setEnabled(false);
+            cmbConducteur.removeAllItems();
+        }
+        
+        if (cmbVehicule != null) {
+            cmbVehicule.setEnabled(false);
+            cmbVehicule.removeAllItems();
+        }
+        
+        if (btnSauvegarder != null) {
+            btnSauvegarder.setEnabled(false);
+            btnSauvegarder.setText("❌ Sauvegarde impossible");
+        }
+        
+        // Afficher un message d'information à l'utilisateur
+        JOptionPane.showMessageDialog(
+            this,
+            "⚠️ Impossible de se connecter à la base de données.\n\n" +
+            "Veuillez vérifier que :\n" +
+            "• WAMP Server est démarré\n" +
+            "• MySQL est en cours d'exécution\n" +
+            "• La base de données 'Bdd_charroi_auto' existe\n\n" +
+            "L'application fonctionnera en mode lecture seule.",
+            "Problème de connexion à la base de données",
+            JOptionPane.WARNING_MESSAGE
+        );
+        
+        // Mettre à jour les statistiques avec des valeurs par défaut
+        if (lblConducteursActifs != null) {
+            lblConducteursActifs.setText("N/A");
+        }
+        if (lblVehiculesDispos != null) {
+            lblVehiculesDispos.setText("N/A");
+        }
     }
 }

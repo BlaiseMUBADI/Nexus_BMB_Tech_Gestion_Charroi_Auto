@@ -15,8 +15,9 @@ import nexus_bmb_soft.application.form.MainForm;
 import raven.toast.Notifications;
 
 /**
- *
- * @author Raven
+ * DAO (Data Access Object) pour la gestion des véhicules
+ * 
+ * @author BlaiseMUBADI
  */
 public class Application extends javax.swing.JFrame {
 

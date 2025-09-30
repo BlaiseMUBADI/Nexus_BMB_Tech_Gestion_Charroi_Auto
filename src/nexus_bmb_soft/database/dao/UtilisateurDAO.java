@@ -15,10 +15,7 @@ import nexus_bmb_soft.models.Utilisateur;
  */
 public class UtilisateurDAO {
     
-    private Connection connection;
-    
     public UtilisateurDAO() {
-        this.connection = DatabaseConnection.getConnection();
         initializeTable();
     }
     
@@ -26,7 +23,9 @@ public class UtilisateurDAO {
      * Initialise la table des utilisateurs si elle n'existe pas
      */
     private void initializeTable() {
-        try {
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement()) {
+            
             // D'abord, créer la table de base si elle n'existe pas
             String createTableSQL = "CREATE TABLE IF NOT EXISTS utilisateur (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY," +
@@ -35,7 +34,6 @@ public class UtilisateurDAO {
                 "mot_de_passe_hash VARCHAR(255) NOT NULL" +
                 ")";
             
-            Statement stmt = connection.createStatement();
             stmt.executeUpdate(createTableSQL);
             
             // Ensuite, essayer d'ajouter les nouvelles colonnes si elles n'existent pas
@@ -75,7 +73,7 @@ public class UtilisateurDAO {
             }
             
             // Vérifier quelles colonnes existent réellement
-            checkAvailableColumns();
+            checkAvailableColumns(conn);
             
             // Insérer des données de test si la table est vide
             String countSQL = "SELECT COUNT(*) FROM utilisateur";
@@ -83,7 +81,7 @@ public class UtilisateurDAO {
             rs.next();
             
             if (rs.getInt(1) == 0) {
-                insertTestData();
+                insertTestData(conn);
             }
             
         } catch (SQLException e) {
@@ -101,9 +99,9 @@ public class UtilisateurDAO {
     /**
      * Vérifie quelles colonnes sont disponibles dans la table
      */
-    private void checkAvailableColumns() {
+    private void checkAvailableColumns(Connection conn) {
         try {
-            DatabaseMetaData metaData = connection.getMetaData();
+            DatabaseMetaData metaData = conn.getMetaData();
             ResultSet columns = metaData.getColumns(null, null, "utilisateur", null);
             
             while (columns.next()) {
@@ -138,7 +136,7 @@ public class UtilisateurDAO {
     /**
      * Insère des données de test
      */
-    private void insertTestData() {
+    private void insertTestData(Connection conn) {
         try {
             // Construire la requête selon les colonnes disponibles
             StringBuilder insertSQL = new StringBuilder("INSERT INTO utilisateur (nom, role, mot_de_passe_hash");
@@ -183,7 +181,7 @@ public class UtilisateurDAO {
             }
             
             String finalSQL = insertSQL.toString() + valuesSQL.toString();
-            Statement stmt = connection.createStatement();
+            Statement stmt = conn.createStatement();
             stmt.executeUpdate(finalSQL);
             System.out.println("Données de test insérées dans la table utilisateur.");
             
@@ -227,7 +225,8 @@ public class UtilisateurDAO {
         
         sql.append(") ").append(values).append(")");
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, utilisateur.getNom());
             stmt.setString(2, utilisateur.getRole().name());
             stmt.setString(3, utilisateur.getMotDePasseHash());
@@ -277,7 +276,8 @@ public class UtilisateurDAO {
     public Utilisateur lire(int id) {
         String sql = "SELECT * FROM utilisateur WHERE id = ?";
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             
@@ -347,7 +347,8 @@ public class UtilisateurDAO {
         
         sql.append(" WHERE id = ?");
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
             stmt.setString(1, utilisateur.getNom());
             stmt.setString(2, utilisateur.getRole().name());
             stmt.setString(3, utilisateur.getMotDePasseHash());
@@ -385,7 +386,8 @@ public class UtilisateurDAO {
     public boolean supprimer(int id) {
         String sql = "DELETE FROM utilisateur WHERE id = ?";
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -415,7 +417,8 @@ public class UtilisateurDAO {
         
         sql.append(" ORDER BY nom, prenom");
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             
             if (nomPrenom != null && !nomPrenom.trim().isEmpty()) {
@@ -449,7 +452,8 @@ public class UtilisateurDAO {
     public Utilisateur trouverParEmail(String email) {
         String sql = "SELECT * FROM utilisateur WHERE email = ?";
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             
@@ -468,7 +472,8 @@ public class UtilisateurDAO {
     public int compterParRole(String role) {
         String sql = "SELECT COUNT(*) FROM utilisateur WHERE role = ?";
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, role);
             ResultSet rs = stmt.executeQuery();
             
@@ -487,7 +492,8 @@ public class UtilisateurDAO {
     public int compterParStatut(String statut) {
         String sql = "SELECT COUNT(*) FROM utilisateur WHERE statut = ?";
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, statut);
             ResultSet rs = stmt.executeQuery();
             

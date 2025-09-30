@@ -27,28 +27,25 @@ public class DatabaseConnection {
             + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
     
     private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
-    private static Connection connection = null;
     
     /**
-     * Obtient une connexion à la base de données
-     * Utilise le pattern Singleton pour une seule connexion
+     * Obtient une nouvelle connexion à la base de données
+     * CHAQUE APPEL RETOURNE UNE NOUVELLE CONNEXION pour éviter les problèmes de connexion fermée
      */
     public static Connection getConnection() {
         try {
-            if (connection == null || connection.isClosed()) {
-                // Chargement du driver MySQL
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                
-                // Création de la connexion avec des paramètres pour éviter les timeouts
-                connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-                
-                // Configuration pour éviter les timeouts et fermetures automatiques
-                connection.setAutoCommit(true);
-                
-                LOGGER.info("✅ Connexion à la base de données établie avec succès");
-                LOGGER.info("📊 Base de données: " + DB_NAME);
-                LOGGER.info("🖥️ Serveur: " + DB_HOST + ":" + DB_PORT);
-            }
+            // Chargement du driver MySQL
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            
+            // Création d'une NOUVELLE connexion à chaque appel
+            Connection newConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            
+            // Configuration de la connexion
+            newConnection.setAutoCommit(true);
+            
+            LOGGER.fine("🔗 Nouvelle connexion à la base de données créée");
+            return newConnection;
+            
         } catch (ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, "❌ Driver MySQL introuvable", e);
             throw new RuntimeException("Driver MySQL non trouvé. Ajoutez mysql-connector-java à votre projet.", e);
@@ -56,42 +53,34 @@ public class DatabaseConnection {
             LOGGER.log(Level.SEVERE, "❌ Erreur de connexion à la base de données", e);
             throw new RuntimeException("Impossible de se connecter à la base de données. Vérifiez que WAMP est démarré.", e);
         }
-        return connection;
     }
     
     /**
-     * Ferme la connexion à la base de données
+     * Méthode dépréciée - Les connexions sont maintenant fermées automatiquement avec try-with-resources
+     * @deprecated Utilisez try-with-resources dans vos DAO au lieu de fermer manuellement
      */
+    @Deprecated
     public static void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                LOGGER.info("🔌 Connexion à la base de données fermée");
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "⚠️ Erreur lors de la fermeture de la connexion", e);
-        }
+        LOGGER.info("ℹ️ closeConnection() est déprécié - utilisez try-with-resources");
     }
     
     /**
      * Teste la connexion à la base de données
      */
     public static boolean testConnection() {
-        try {
-            Connection conn = getConnection();
-            if (conn != null && !conn.isClosed()) {
-                // Test simple avec une requête
-                Statement stmt = conn.createStatement();
-                stmt.executeQuery("SELECT 1");
-                stmt.close();
-                
-                LOGGER.info("✅ Test de connexion réussi");
-                return true;
-            }
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            
+            // Test simple avec une requête
+            stmt.executeQuery("SELECT 1");
+            
+            LOGGER.info("✅ Test de connexion réussi");
+            return true;
+            
         } catch (SQLException e) {
             LOGGER.log(Level.WARNING, "❌ Test de connexion échoué", e);
+            return false;
         }
-        return false;
     }
     
     /**
@@ -137,19 +126,17 @@ public class DatabaseConnection {
             String baseUrl = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + 
                            "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             
-            Connection conn = DriverManager.getConnection(baseUrl, DB_USER, DB_PASSWORD);
-            Statement stmt = conn.createStatement();
-            
-            // Créer la base si elle n'existe pas
-            String createDB = "CREATE DATABASE IF NOT EXISTS " + DB_NAME + 
-                            " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
-            stmt.executeUpdate(createDB);
-            
-            LOGGER.info("✅ Base de données créée ou vérifiée: " + DB_NAME);
-            
-            stmt.close();
-            conn.close();
-            return true;
+            try (Connection conn = DriverManager.getConnection(baseUrl, DB_USER, DB_PASSWORD);
+                 Statement stmt = conn.createStatement()) {
+                
+                // Créer la base si elle n'existe pas
+                String createDB = "CREATE DATABASE IF NOT EXISTS " + DB_NAME + 
+                                " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+                stmt.executeUpdate(createDB);
+                
+                LOGGER.info("✅ Base de données créée ou vérifiée: " + DB_NAME);
+                return true;
+            }
             
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "❌ Erreur lors de la création de la base", e);

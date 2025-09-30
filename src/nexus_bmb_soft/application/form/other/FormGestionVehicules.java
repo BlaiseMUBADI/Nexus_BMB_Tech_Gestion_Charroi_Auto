@@ -26,15 +26,42 @@ public class FormGestionVehicules extends JPanel {
     
     private VehiculeDAO vehiculeDAO;
     
-    // Components pour l'ajout
+    // Components pour l'ajout - Nouvelle architecture BDD
     private JTextField txtMatricule;
+    private JTextField txtImmatriculation;
     private JTextField txtMarque;
+    private JTextField txtModele;
     private JTextField txtType;
+    private JComboBox<String> cmbCategorie;
     private JTextField txtAnnee;
-    private JCheckBox chkDisponible;
+    private JTextField txtCouleur;
+    private JTextField txtNumeroChasssis;
+    private JTextField txtNumeroMoteur;
+    private JComboBox<String> cmbCarburant;
+    private JTextField txtConsommation;
+    private JTextField txtCapaciteReservoir;
+    private JTextField txtKilometrageInitial;
+    private JTextField txtKilometrageActuel;
+    private JComboBox<String> cmbStatut;
+    private JComboBox<String> cmbEtat;
+    private JSpinner spnDateAcquisition;
+    private JTextField txtPrixAcquisition;
+    private JSpinner spnDateMiseService;
     private JSpinner spnDateAssurance;
+    private JTextField txtCompagnieAssurance;
+    private JTextField txtPoliceAssurance;
+    private JSpinner spnDateVisiteTechnique;
+    private JTextField txtLieuVisiteTechnique;
+    private JSpinner spnDateDerniereVidange;
+    private JTextField txtKmDerniereVidange;
+    private JTextField txtLocalisation;
+    private JTextArea txtNotes;
+    
+    // Champs de compatibilité pour l'ancien système
+    private JCheckBox chkDisponible;
     private JSpinner spnDateVidange;
     private JSpinner spnDateVisite;
+    
     private JButton btnSauvegarder;
     private JButton btnReinitialiser;
     
@@ -51,10 +78,11 @@ public class FormGestionVehicules extends JPanel {
     // Onglets
     private JTabbedPane tabbedPane;
     
-    // Colonnes du tableau
+    // Colonnes du tableau - Nouvelle architecture BDD
     private final String[] COLONNES = {
-        "ID", "Matricule", "Marque", "Type", "Année", 
-        "Disponible", "Assurance", "Vidange", "Visite Technique"
+        "ID", "Matricule", "Immatriculation", "Marque", "Modèle", "Type", 
+        "Catégorie", "Année", "Couleur", "Carburant", "Kilométrage", 
+        "Statut", "État", "Assurance", "Visite Technique", "*"
     };
     
     public FormGestionVehicules() {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <scope name="PROJECT">
+        <tool-list>
+            <tool kind="CREATE_HINTS_TOOL" preference-name="java-hints" description="Java Hints">
+                <tool-hint kind="inspect">org.netbeans.modules.java.hints</tool-hint>
+            </tool>
+        </tool-list>
+    </scope>
+</configuration>

@@ -140,7 +140,8 @@ public class FormProgrammerEntretien extends JPanel {
         gbc.gridx = 0; gbc.gridy = 5; gbc.fill = GridBagConstraints.NONE; gbc.weightx = 0;
         panelForm.add(new JLabel(" Statut :", IconUtils.createListIcon(new Color(46, 204, 113), 16), JLabel.LEFT), gbc);
         gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
-        cmbStatut = new JComboBox<>(new String[]{"programme", "en_cours", "termine"});
+    // Utiliser les valeurs alignées à l'ENUM SQL
+    cmbStatut = new JComboBox<>(new String[]{"PLANIFIE", "EN_COURS", "TERMINE"});
         cmbStatut.setFont(cmbStatut.getFont().deriveFont(12f));
         cmbStatut.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(200, 200, 200)),
@@ -256,6 +257,14 @@ public class FormProgrammerEntretien extends JPanel {
             double cout = Double.parseDouble(coutText);
             int kilometrage = Integer.parseInt(kilometrageText);
             String statut = (String) cmbStatut.getSelectedItem();
+            // Stocker dans le modèle avec compatibilité descendante (certains écrans utilisent encore lowercase)
+            String statutModele;
+            switch (statut) {
+                case "PLANIFIE": statutModele = "programme"; break;
+                case "EN_COURS": statutModele = "en_cours"; break;
+                case "TERMINE": statutModele = "termine"; break;
+                default: statutModele = statut; // autres valeurs: ANNULE, REPORTE...
+            }
             
             // Création de l'entretien
             Entretien entretien = new Entretien();
@@ -265,7 +274,7 @@ public class FormProgrammerEntretien extends JPanel {
             entretien.setCommentaire(commentaire.isEmpty() ? null : commentaire);
             entretien.setCout(cout);
             entretien.setKilometrage(kilometrage);
-            entretien.setStatut(statut);
+            entretien.setStatut(statutModele);
             
             // Sauvegarde
             boolean succes = entretienDAO.ajouterEntretien(entretien);

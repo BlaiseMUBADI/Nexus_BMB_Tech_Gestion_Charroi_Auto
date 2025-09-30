@@ -262,11 +262,11 @@ public class Vehicule {
         this.kilometrageActuel = kilometrageActuel;
     }
     
-    public int getKmDerniereVidange() {
-        return kmDerniereVidange != null ? kmDerniereVidange : 0;
+    public Integer getKmDerniereVidange() {
+        return kmDerniereVidange;
     }
     
-    public void setKmDerniereVidange(int kmDerniereVidange) {
+    public void setKmDerniereVidange(Integer kmDerniereVidange) {
         this.kmDerniereVidange = kmDerniereVidange;
     }
     
@@ -377,4 +377,69 @@ public class Vehicule {
         if (getKmAvantVidange() <= 500) return "MOYENNE";
         return "NORMALE";
     }
+    
+    // ===== MÉTHODES SETTER/GETTER AJOUTÉES POUR NOUVEAUX CHAMPS =====
+    
+    public String getImmatriculation() { return immatriculation; }
+    public void setImmatriculation(String immatriculation) { this.immatriculation = immatriculation; }
+    
+    public String getModele() { return modele; }
+    public void setModele(String modele) { this.modele = modele; }
+    
+    public String getNumeroChasssis() { return numeroChasssis; }
+    public void setNumeroChasssis(String numeroChasssis) { this.numeroChasssis = numeroChasssis; }
+    
+    public String getNumeroMoteur() { return numeroMoteur; }
+    public void setNumeroMoteur(String numeroMoteur) { this.numeroMoteur = numeroMoteur; }
+    
+    public String getCouleur() { return couleur; }
+    public void setCouleur(String couleur) { this.couleur = couleur; }
+    
+    public Categorie getCategorie() { return categorie; }
+    public void setCategorie(Categorie categorie) { this.categorie = categorie; }
+    
+    public Carburant getCarburant() { return carburant; }
+    public void setCarburant(Carburant carburant) { this.carburant = carburant; }
+    
+    public BigDecimal getConsommation100km() { return consommation100km; }
+    public void setConsommation100km(BigDecimal consommation100km) { this.consommation100km = consommation100km; }
+    
+    public BigDecimal getCapaciteReservoir() { return capaciteReservoir; }
+    public void setCapaciteReservoir(BigDecimal capaciteReservoir) { this.capaciteReservoir = capaciteReservoir; }
+    
+    public int getKilometrageInitial() { return kilometrageInitial; }
+    public void setKilometrageInitial(int kilometrageInitial) { this.kilometrageInitial = kilometrageInitial; }
+    
+    public Etat getEtat() { return etat; }
+    public void setEtat(Etat etat) { this.etat = etat; }
+    
+    public LocalDate getDateAcquisition() { return dateAcquisition; }
+    public void setDateAcquisition(LocalDate dateAcquisition) { this.dateAcquisition = dateAcquisition; }
+    
+    public LocalDate getDateMiseService() { return dateMiseService; }
+    public void setDateMiseService(LocalDate dateMiseService) { this.dateMiseService = dateMiseService; }
+    
+    public BigDecimal getPrixAcquisition() { return prixAcquisition; }
+    public void setPrixAcquisition(BigDecimal prixAcquisition) { this.prixAcquisition = prixAcquisition; }
+    
+    public String getCompagnieAssurance() { return compagnieAssurance; }
+    public void setCompagnieAssurance(String compagnieAssurance) { this.compagnieAssurance = compagnieAssurance; }
+    
+    public String getPoliceAssurance() { return policeAssurance; }
+    public void setPoliceAssurance(String policeAssurance) { this.policeAssurance = policeAssurance; }
+    
+    public String getLieuVisiteTechnique() { return lieuVisiteTechnique; }
+    public void setLieuVisiteTechnique(String lieuVisiteTechnique) { this.lieuVisiteTechnique = lieuVisiteTechnique; }
+    
+    public String getLocalisation() { return localisation; }
+    public void setLocalisation(String localisation) { this.localisation = localisation; }
+    
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+    
+    public boolean isActif() { return actif; }
+    public void setActif(boolean actif) { this.actif = actif; }
+    
+    public Integer getResponsableId() { return responsableId; }
+    public void setResponsableId(Integer responsableId) { this.responsableId = responsableId; }
 }

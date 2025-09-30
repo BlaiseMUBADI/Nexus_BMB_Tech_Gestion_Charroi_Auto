@@ -231,24 +231,44 @@ public class DatabaseManager {
             stmt.executeUpdate(createAffectation);
             LOGGER.info("✅ Table 'affectation' créée");
             
-            // Table des entretiens (FK vers vehicule uniquement)
-            String createEntretien = "CREATE TABLE IF NOT EXISTS entretien (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY," +
-                    "vehicule_id INT NOT NULL," +
-                    "date_entretien DATE NOT NULL," +
-                    "type_entretien VARCHAR(50)," +
-                    "commentaire TEXT," +
-                    "cout DECIMAL(10,2)," +
-                    "kilometrage INT," +
-                    "statut ENUM('programme', 'en_cours', 'termine') DEFAULT 'programme'," +
-                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                    "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
-                    "INDEX idx_vehicule_id (vehicule_id)," +
-                    "INDEX idx_date_entretien (date_entretien)," +
-                    "INDEX idx_statut (statut)," +
-                    "INDEX idx_type_entretien (type_entretien)," +
-                    "CONSTRAINT fk_entretien_vehicule FOREIGN KEY (vehicule_id) REFERENCES vehicule(id) ON DELETE CASCADE ON UPDATE CASCADE" +
-                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        // Table des entretiens (alignée avec DAO et dump SQL)
+        String createEntretien = "CREATE TABLE IF NOT EXISTS entretien (" +
+            "id INT AUTO_INCREMENT PRIMARY KEY," +
+            "vehicule_id INT NOT NULL," +
+            "type_entretien_id INT DEFAULT NULL," +
+            "type_entretien_libre VARCHAR(100)," +
+            "date_programmee DATE DEFAULT NULL," +
+            "date_realisation DATE DEFAULT NULL," +
+            "kilometrage INT," +
+            "categorie ENUM('PREVENTIF','CURATIF','OBLIGATOIRE','URGENT') DEFAULT 'PREVENTIF'," +
+            "priorite ENUM('BASSE','NORMALE','HAUTE','CRITIQUE') DEFAULT 'NORMALE'," +
+            "statut ENUM('PLANIFIE','EN_ATTENTE','EN_COURS','TERMINE','ANNULE','REPORTE') DEFAULT 'PLANIFIE'," +
+            "description TEXT," +
+            "commentaire TEXT," +
+            "cout_prevu DECIMAL(10,2)," +
+            "cout_reel DECIMAL(10,2)," +
+            "fournisseur VARCHAR(100)," +
+            "mecanicien VARCHAR(100)," +
+            "duree_reelle_heures DECIMAL(4,2)," +
+            "pieces_changees TEXT," +
+            "prochaine_echeance_km INT," +
+            "prochaine_echeance_date DATE," +
+            "alerte_active TINYINT(1) DEFAULT 1," +
+            "created_by INT DEFAULT NULL," +
+            "updated_by INT DEFAULT NULL," +
+            "created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP," +
+            "updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
+            "INDEX idx_vehicule_id (vehicule_id)," +
+            "INDEX idx_type_entretien_id (type_entretien_id)," +
+            "INDEX idx_date_programmee (date_programmee)," +
+            "INDEX idx_date_realisation (date_realisation)," +
+            "INDEX idx_statut (statut)," +
+            "INDEX idx_categorie (categorie)," +
+            "INDEX idx_priorite (priorite)," +
+            "INDEX idx_kilometrage (kilometrage)," +
+            "INDEX idx_created_by (created_by)," +
+            "CONSTRAINT fk_entretien_vehicule FOREIGN KEY (vehicule_id) REFERENCES vehicule(id) ON DELETE CASCADE ON UPDATE CASCADE" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
             stmt.executeUpdate(createEntretien);
             LOGGER.info("✅ Table 'entretien' créée");
             

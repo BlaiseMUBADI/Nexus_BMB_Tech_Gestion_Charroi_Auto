@@ -2,6 +2,7 @@ package nexus_bmb_soft.database.dao;
 
 import nexus_bmb_soft.database.DatabaseConnection;
 import nexus_bmb_soft.models.Vehicule;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,36 +20,89 @@ public class VehiculeDAO {
     private static final Logger LOGGER = Logger.getLogger(VehiculeDAO.class.getName());
     
     /**
-     * Ajoute un nouveau véhicule
+     * Ajoute un nouveau véhicule - Version complète avec nouvelle architecture BDD
      */
     public boolean ajouterVehicule(Vehicule vehicule) {
-        String sql = "INSERT INTO vehicule (matricule, marque, type, annee, disponible, " +
-                    "date_assurance, date_vidange, date_visite_technique) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO vehicule (" +
+                    "matricule, immatriculation, marque, modele, type, categorie, annee, couleur, " +
+                    "numero_chassis, numero_moteur, carburant, consommation_100km, capacite_reservoir, " +
+                    "kilometrage_initial, kilometrage_actuel, statut, etat, " +
+                    "date_acquisition, prix_acquisition, date_mise_service, date_assurance, " +
+                    "compagnie_assurance, police_assurance, date_visite_technique, lieu_visite_technique, " +
+                    "date_derniere_vidange, km_derniere_vidange, localisation, notes, actif" +
+                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
-            pstmt.setString(1, vehicule.getMatricule());
-            pstmt.setString(2, vehicule.getMarque());
-            pstmt.setString(3, vehicule.getType());
+            int paramIndex = 1;
             
-            // Gestion de l'année nullable
+            // Champs obligatoires
+            pstmt.setString(paramIndex++, vehicule.getMatricule());
+            pstmt.setString(paramIndex++, vehicule.getImmatriculation());
+            pstmt.setString(paramIndex++, vehicule.getMarque());
+            pstmt.setString(paramIndex++, vehicule.getModele());
+            pstmt.setString(paramIndex++, vehicule.getType());
+            
+            // Énumérations - avec gestion null
+            pstmt.setString(paramIndex++, vehicule.getCategorie() != null ? vehicule.getCategorie().toString() : null);
+            
+            // Année nullable
             if (vehicule.getAnnee() != null) {
-                pstmt.setInt(4, vehicule.getAnnee());
+                pstmt.setInt(paramIndex++, vehicule.getAnnee());
             } else {
-                pstmt.setNull(4, java.sql.Types.INTEGER);
+                pstmt.setNull(paramIndex++, java.sql.Types.INTEGER);
             }
             
-            pstmt.setBoolean(5, vehicule.isDisponible());
+            pstmt.setString(paramIndex++, vehicule.getCouleur());
+            pstmt.setString(paramIndex++, vehicule.getNumeroChasssis());
+            pstmt.setString(paramIndex++, vehicule.getNumeroMoteur());
             
-            // Gestion des dates nulles
-            pstmt.setDate(6, vehicule.getDateAssurance() != null ? 
+            pstmt.setString(paramIndex++, vehicule.getCarburant() != null ? vehicule.getCarburant().toString() : null);
+            
+            // Champs décimaux
+            pstmt.setBigDecimal(paramIndex++, vehicule.getConsommation100km());
+            pstmt.setBigDecimal(paramIndex++, vehicule.getCapaciteReservoir());
+            
+            // Kilométrage
+            pstmt.setInt(paramIndex++, vehicule.getKilometrageInitial());
+            pstmt.setInt(paramIndex++, vehicule.getKilometrageActuel());
+            
+            // Statut et état
+            pstmt.setString(paramIndex++, vehicule.getStatutVehicule() != null ? vehicule.getStatutVehicule().toString() : "DISPONIBLE");
+            pstmt.setString(paramIndex++, vehicule.getEtat() != null ? vehicule.getEtat().toString() : "BON");
+            
+            // Dates - avec gestion null
+            pstmt.setDate(paramIndex++, vehicule.getDateAcquisition() != null ? 
+                Date.valueOf(vehicule.getDateAcquisition()) : null);
+            pstmt.setBigDecimal(paramIndex++, vehicule.getPrixAcquisition());
+            pstmt.setDate(paramIndex++, vehicule.getDateMiseService() != null ? 
+                Date.valueOf(vehicule.getDateMiseService()) : null);
+            pstmt.setDate(paramIndex++, vehicule.getDateAssurance() != null ? 
                 Date.valueOf(vehicule.getDateAssurance()) : null);
-            pstmt.setDate(7, vehicule.getDateVidange() != null ? 
-                Date.valueOf(vehicule.getDateVidange()) : null);
-            pstmt.setDate(8, vehicule.getDateVisiteTechnique() != null ? 
+            
+            // Informations d'assurance
+            pstmt.setString(paramIndex++, vehicule.getCompagnieAssurance());
+            pstmt.setString(paramIndex++, vehicule.getPoliceAssurance());
+            
+            // Visite technique
+            pstmt.setDate(paramIndex++, vehicule.getDateVisiteTechnique() != null ? 
                 Date.valueOf(vehicule.getDateVisiteTechnique()) : null);
+            pstmt.setString(paramIndex++, vehicule.getLieuVisiteTechnique());
+            
+            // Vidange
+            pstmt.setDate(paramIndex++, vehicule.getDateVidange() != null ? 
+                Date.valueOf(vehicule.getDateVidange()) : null);
+            if (vehicule.getKmDerniereVidange() != null) {
+                pstmt.setInt(paramIndex++, vehicule.getKmDerniereVidange());
+            } else {
+                pstmt.setNull(paramIndex++, java.sql.Types.INTEGER);
+            }
+            
+            // Informations générales
+            pstmt.setString(paramIndex++, vehicule.getLocalisation());
+            pstmt.setString(paramIndex++, vehicule.getNotes());
+            pstmt.setBoolean(paramIndex++, vehicule.isActif());
             
             int affectedRows = pstmt.executeUpdate();
             
@@ -58,12 +112,13 @@ public class VehiculeDAO {
                 if (rs.next()) {
                     vehicule.setId(rs.getInt(1));
                 }
-                LOGGER.info("✅ Véhicule ajouté: " + vehicule.getMatricule());
+                LOGGER.info(String.format("✅ Véhicule ajouté: %s (%s)", 
+                          vehicule.getMatricule(), vehicule.getMarque()));
                 return true;
             }
             
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "❌ Erreur lors de l'ajout du véhicule", e);
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors de l'ajout du véhicule: " + vehicule.getMatricule(), e);
         }
         return false;
     }
@@ -174,7 +229,7 @@ public class VehiculeDAO {
      */
     public boolean modifierVehicule(Vehicule vehicule) {
         String sql = "UPDATE vehicule SET matricule = ?, marque = ?, type = ?, annee = ?, " +
-                    "disponible = ?, date_assurance = ?, date_vidange = ?, " +
+                    "statut = ?, date_assurance = ?, date_derniere_vidange = ?, " +
                     "date_visite_technique = ? " +
                     "WHERE id = ?";
         
@@ -192,7 +247,9 @@ public class VehiculeDAO {
                 pstmt.setNull(4, java.sql.Types.INTEGER);
             }
             
-            pstmt.setBoolean(5, vehicule.isDisponible());
+            // Utiliser le statut au lieu du boolean disponible
+            String statut = vehicule.isDisponible() ? "DISPONIBLE" : "AFFECTE";
+            pstmt.setString(5, statut);
             
             pstmt.setDate(6, vehicule.getDateAssurance() != null ? 
                 Date.valueOf(vehicule.getDateAssurance()) : null);
@@ -293,12 +350,17 @@ public class VehiculeDAO {
     
     /**
      * Conversion ResultSet vers objet Vehicule
+     * Mise à jour pour correspondre à la structure de base de données actuelle
      */
     private Vehicule mapResultSetToVehicule(ResultSet rs) throws SQLException {
         Vehicule vehicule = new Vehicule();
+        
+        // Champs de base
         vehicule.setId(rs.getInt("id"));
         vehicule.setMatricule(rs.getString("matricule"));
+        vehicule.setImmatriculation(rs.getString("immatriculation"));
         vehicule.setMarque(rs.getString("marque"));
+        vehicule.setModele(rs.getString("modele"));
         vehicule.setType(rs.getString("type"));
         
         // Gestion de l'année nullable
@@ -307,7 +369,52 @@ public class VehiculeDAO {
             vehicule.setAnnee(annee);
         }
         
-        vehicule.setDisponible(rs.getBoolean("disponible"));
+        vehicule.setCouleur(rs.getString("couleur"));
+        vehicule.setNumeroChasssis(rs.getString("numero_chassis"));
+        vehicule.setNumeroMoteur(rs.getString("numero_moteur"));
+        
+        // Énumérations - avec gestion des valeurs nulles
+        String categorieStr = rs.getString("categorie");
+        if (categorieStr != null) {
+            vehicule.setCategorie(Vehicule.Categorie.valueOf(categorieStr));
+        }
+        
+        String carburantStr = rs.getString("carburant");
+        if (carburantStr != null) {
+            vehicule.setCarburant(Vehicule.Carburant.valueOf(carburantStr));
+        }
+        
+        String statutStr = rs.getString("statut");
+        if (statutStr != null) {
+            vehicule.setStatutVehicule(Vehicule.Statut.valueOf(statutStr));
+            // Conversion pour compatibilité avec l'ancien système
+            vehicule.setDisponible(statutStr.equals("DISPONIBLE"));
+        }
+        
+        String etatStr = rs.getString("etat");
+        if (etatStr != null) {
+            vehicule.setEtat(Vehicule.Etat.valueOf(etatStr));
+        }
+        
+        // Kilométrage
+        vehicule.setKilometrageInitial(rs.getInt("kilometrage_initial"));
+        vehicule.setKilometrageActuel(rs.getInt("kilometrage_actuel"));
+        
+        // Données financières
+        BigDecimal consommation = rs.getBigDecimal("consommation_100km");
+        if (consommation != null) {
+            vehicule.setConsommation100km(consommation);
+        }
+        
+        BigDecimal capacite = rs.getBigDecimal("capacite_reservoir");
+        if (capacite != null) {
+            vehicule.setCapaciteReservoir(capacite);
+        }
+        
+        BigDecimal prixAcquisition = rs.getBigDecimal("prix_acquisition");
+        if (prixAcquisition != null) {
+            vehicule.setPrixAcquisition(prixAcquisition);
+        }
         
         // Gestion des dates nulles
         Date dateAssurance = rs.getDate("date_assurance");
@@ -315,14 +422,45 @@ public class VehiculeDAO {
             vehicule.setDateAssurance(dateAssurance.toLocalDate());
         }
         
-        Date dateVidange = rs.getDate("date_vidange");
-        if (dateVidange != null) {
-            vehicule.setDateVidange(dateVidange.toLocalDate());
+        Date dateDerniereVidange = rs.getDate("date_derniere_vidange");
+        if (dateDerniereVidange != null) {
+            vehicule.setDateVidange(dateDerniereVidange.toLocalDate());
         }
         
         Date dateVisiteTechnique = rs.getDate("date_visite_technique");
         if (dateVisiteTechnique != null) {
             vehicule.setDateVisiteTechnique(dateVisiteTechnique.toLocalDate());
+        }
+        
+        Date dateAcquisition = rs.getDate("date_acquisition");
+        if (dateAcquisition != null) {
+            vehicule.setDateAcquisition(dateAcquisition.toLocalDate());
+        }
+        
+        Date dateMiseService = rs.getDate("date_mise_service");
+        if (dateMiseService != null) {
+            vehicule.setDateMiseService(dateMiseService.toLocalDate());
+        }
+        
+        // Informations d'assurance
+        vehicule.setCompagnieAssurance(rs.getString("compagnie_assurance"));
+        vehicule.setPoliceAssurance(rs.getString("police_assurance"));
+        
+        // Informations techniques
+        vehicule.setLieuVisiteTechnique(rs.getString("lieu_visite_technique"));
+        int kmDerniereVidange = rs.getInt("km_derniere_vidange");
+        if (!rs.wasNull()) {
+            vehicule.setKmDerniereVidange(kmDerniereVidange);
+        }
+        
+        // Informations générales
+        vehicule.setLocalisation(rs.getString("localisation"));
+        vehicule.setNotes(rs.getString("notes"));
+        vehicule.setActif(rs.getBoolean("actif"));
+        
+        int responsableId = rs.getInt("responsable_id");
+        if (!rs.wasNull()) {
+            vehicule.setResponsableId(responsableId);
         }
         
         return vehicule;
@@ -334,8 +472,8 @@ public class VehiculeDAO {
     public VehiculeStats getStatistiques() {
         String sql = "SELECT " +
                     "COUNT(*) as total, " +
-                    "SUM(CASE WHEN disponible = TRUE THEN 1 ELSE 0 END) as disponibles, " +
-                    "SUM(CASE WHEN disponible = FALSE THEN 1 ELSE 0 END) as affectes " +
+                    "SUM(CASE WHEN statut = 'DISPONIBLE' THEN 1 ELSE 0 END) as disponibles, " +
+                    "SUM(CASE WHEN statut = 'AFFECTE' THEN 1 ELSE 0 END) as affectes " +
                     "FROM vehicule";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -419,18 +557,20 @@ public class VehiculeDAO {
     public void synchroniserDisponibilite(int vehiculeId) {
         boolean realementDisponible = estRealementDisponible(vehiculeId);
         
-        String sql = "UPDATE vehicule SET disponible = ? WHERE id = ?";
+        // Utiliser la colonne 'statut' au lieu de 'disponible'
+        String nouveauStatut = realementDisponible ? "DISPONIBLE" : "AFFECTE";
+        String sql = "UPDATE vehicule SET statut = ? WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setBoolean(1, realementDisponible);
+            pstmt.setString(1, nouveauStatut);
             pstmt.setInt(2, vehiculeId);
             
             int rowsUpdated = pstmt.executeUpdate();
             if (rowsUpdated > 0) {
                 LOGGER.info(String.format("✅ Véhicule ID %d synchronisé: %s", 
-                          vehiculeId, realementDisponible ? "DISPONIBLE" : "AFFECTÉ"));
+                          vehiculeId, nouveauStatut));
             }
             
         } catch (SQLException e) {

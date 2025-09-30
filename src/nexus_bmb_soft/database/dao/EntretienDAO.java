@@ -24,8 +24,8 @@ public class EntretienDAO {
      * Ajoute un nouvel entretien
      */
     public boolean ajouterEntretien(Entretien entretien) {
-        String sql = "INSERT INTO entretien (vehicule_id, date_entretien, type_entretien, " +
-                    "commentaire, cout, statut, kilometrage) " +
+    String sql = "INSERT INTO entretien (vehicule_id, date_programmee, type_entretien_libre, " +
+            "commentaire, cout_prevu, statut, kilometrage) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -37,7 +37,24 @@ public class EntretienDAO {
             pstmt.setString(3, entretien.getTypeEntretien());
             pstmt.setString(4, entretien.getCommentaire());
             pstmt.setDouble(5, entretien.getCout());
-            pstmt.setString(6, entretien.getStatut() != null ? entretien.getStatut() : "programme");
+            // Statut: aligné avec l'ENUM de la base ('PLANIFIE','EN_COURS','TERMINE', ...)
+            String statut = entretien.getStatut();
+            if (statut == null || statut.trim().isEmpty()) {
+                statut = "PLANIFIE";
+            }
+            // Compatibilité avec anciens libellés
+            switch (statut.toLowerCase()) {
+                case "programme":
+                    statut = "PLANIFIE"; break;
+                case "en_cours":
+                    statut = "EN_COURS"; break;
+                case "termine":
+                    statut = "TERMINE"; break;
+                default:
+                    // laisser tel quel si déjà au bon format ou autre statut supporté (ANNULE, REPORTE, ...)
+                    break;
+            }
+            pstmt.setString(6, statut);
             pstmt.setInt(7, entretien.getKilometrage());
             
             int affectedRows = pstmt.executeUpdate();
@@ -90,8 +107,8 @@ public class EntretienDAO {
      * Met à jour un entretien existant
      */
     public boolean modifierEntretien(Entretien entretien) {
-        String sql = "UPDATE entretien SET vehicule_id = ?, date_entretien = ?, " +
-                    "type_entretien = ?, commentaire = ?, cout = ?, statut = ?, " +
+        String sql = "UPDATE entretien SET vehicule_id = ?, date_programmee = ?, " +
+                    "type_entretien_libre = ?, commentaire = ?, cout_prevu = ?, statut = ?, " +
                     "kilometrage = ? WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -103,7 +120,18 @@ public class EntretienDAO {
             pstmt.setString(3, entretien.getTypeEntretien());
             pstmt.setString(4, entretien.getCommentaire());
             pstmt.setDouble(5, entretien.getCout());
-            pstmt.setString(6, entretien.getStatut());
+            // Mapper le statut du modèle vers l'ENUM SQL
+            String statut = entretien.getStatut();
+            if (statut == null || statut.trim().isEmpty()) {
+                statut = "PLANIFIE";
+            }
+            switch (statut.toLowerCase()) {
+                case "programme": statut = "PLANIFIE"; break;
+                case "en_cours": statut = "EN_COURS"; break;
+                case "termine":  statut = "TERMINE";  break;
+                default: /* laisser tel quel */
+            }
+            pstmt.setString(6, statut);
             pstmt.setInt(7, entretien.getKilometrage());
             pstmt.setInt(8, entretien.getId());
             
@@ -151,7 +179,7 @@ public class EntretienDAO {
         String sql = "SELECT e.*, v.matricule, v.marque, v.type " +
                     "FROM entretien e " +
                     "LEFT JOIN vehicule v ON e.vehicule_id = v.id " +
-                    "ORDER BY e.date_entretien DESC " +
+                    "ORDER BY e.date_programmee DESC " +
                     "LIMIT ?";
         
         return executerRequeteEntretiens(sql, limite);
@@ -164,7 +192,7 @@ public class EntretienDAO {
         String sql = "SELECT e.*, v.matricule, v.marque, v.type " +
                     "FROM entretien e " +
                     "LEFT JOIN vehicule v ON e.vehicule_id = v.id " +
-                    "ORDER BY e.date_entretien DESC";
+                    "ORDER BY e.date_programmee DESC";
         
         return executerRequeteEntretiensSansParametre(sql);
     }
@@ -177,7 +205,7 @@ public class EntretienDAO {
                     "FROM entretien e " +
                     "LEFT JOIN vehicule v ON e.vehicule_id = v.id " +
                     "WHERE e.vehicule_id = ? " +
-                    "ORDER BY e.date_entretien DESC";
+                    "ORDER BY e.date_programmee DESC";
         
         return executerRequeteEntretiens(sql, vehiculeId);
     }
@@ -189,8 +217,8 @@ public class EntretienDAO {
         String sql = "SELECT e.*, v.matricule, v.marque, v.type " +
                     "FROM entretien e " +
                     "LEFT JOIN vehicule v ON e.vehicule_id = v.id " +
-                    "WHERE e.type_entretien LIKE ? " +
-                    "ORDER BY e.date_entretien DESC";
+                    "WHERE e.type_entretien_libre LIKE ? " +
+                    "ORDER BY e.date_programmee DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -212,12 +240,24 @@ public class EntretienDAO {
                     "FROM entretien e " +
                     "LEFT JOIN vehicule v ON e.vehicule_id = v.id " +
                     "WHERE e.statut = ? " +
-                    "ORDER BY e.date_entretien DESC";
+                    "ORDER BY e.date_programmee DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, statut);
+            // Mapper statut modèle -> DB
+            String statutDb;
+            if (statut == null) {
+                statutDb = null;
+            } else {
+                switch (statut.toLowerCase()) {
+                    case "programme": statutDb = "PLANIFIE"; break;
+                    case "en_cours": statutDb = "EN_COURS"; break;
+                    case "termine":  statutDb = "TERMINE";  break;
+                    default:           statutDb = statut;      break;
+                }
+            }
+            pstmt.setString(1, statutDb);
             return executerRequeteEntretiens(pstmt);
             
         } catch (SQLException e) {
@@ -233,8 +273,8 @@ public class EntretienDAO {
         String sql = "SELECT e.*, v.matricule, v.marque, v.type " +
                     "FROM entretien e " +
                     "LEFT JOIN vehicule v ON e.vehicule_id = v.id " +
-                    "WHERE e.date_entretien BETWEEN ? AND ? " +
-                    "ORDER BY e.date_entretien DESC";
+                    "WHERE e.date_programmee BETWEEN ? AND ? " +
+                    "ORDER BY e.date_programmee DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -267,26 +307,34 @@ public class EntretienDAO {
         }
         
         if (typeEntretien != null && !typeEntretien.trim().isEmpty()) {
-            sql.append("AND e.type_entretien LIKE ? ");
+            sql.append("AND e.type_entretien_libre LIKE ? ");
             parametres.add("%" + typeEntretien + "%");
         }
         
         if (statut != null && !statut.trim().isEmpty()) {
             sql.append("AND e.statut = ? ");
-            parametres.add(statut);
+            // Mapper statut modèle -> DB
+            String statutDb;
+            switch (statut.toLowerCase()) {
+                case "programme": statutDb = "PLANIFIE"; break;
+                case "en_cours": statutDb = "EN_COURS"; break;
+                case "termine":  statutDb = "TERMINE";  break;
+                default:           statutDb = statut;      break;
+            }
+            parametres.add(statutDb);
         }
         
         if (dateDebut != null) {
-            sql.append("AND e.date_entretien >= ? ");
+            sql.append("AND e.date_programmee >= ? ");
             parametres.add(Date.valueOf(dateDebut));
         }
         
         if (dateFin != null) {
-            sql.append("AND e.date_entretien <= ? ");
+            sql.append("AND e.date_programmee <= ? ");
             parametres.add(Date.valueOf(dateFin));
         }
         
-        sql.append("ORDER BY e.date_entretien DESC");
+        sql.append("ORDER BY e.date_programmee DESC");
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
@@ -316,11 +364,11 @@ public class EntretienDAO {
     public EntretienStats obtenirStatistiques() {
         String sql = "SELECT " +
                     "COUNT(*) as total, " +
-                    "SUM(CASE WHEN statut = 'programme' THEN 1 ELSE 0 END) as programmes, " +
-                    "SUM(CASE WHEN statut = 'en_cours' THEN 1 ELSE 0 END) as en_cours, " +
-                    "SUM(CASE WHEN statut = 'termine' THEN 1 ELSE 0 END) as termines, " +
-                    "SUM(cout) as cout_total, " +
-                    "AVG(cout) as cout_moyen " +
+                    "SUM(CASE WHEN statut = 'PLANIFIE' THEN 1 ELSE 0 END) as programmes, " +
+                    "SUM(CASE WHEN statut = 'EN_COURS' THEN 1 ELSE 0 END) as en_cours, " +
+                    "SUM(CASE WHEN statut = 'TERMINE' THEN 1 ELSE 0 END) as termines, " +
+                    "SUM(cout_prevu) as cout_total, " +
+                    "AVG(cout_prevu) as cout_moyen " +
                     "FROM entretien";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -418,15 +466,28 @@ public class EntretienDAO {
         entretien.setId(rs.getInt("id"));
         entretien.setVehiculeId(rs.getInt("vehicule_id"));
         
-        Date dateEntretien = rs.getDate("date_entretien");
+        Date dateEntretien = rs.getDate("date_programmee");
         if (dateEntretien != null) {
             entretien.setDateEntretien(dateEntretien.toLocalDate());
         }
         
-        entretien.setTypeEntretien(rs.getString("type_entretien"));
+        entretien.setTypeEntretien(rs.getString("type_entretien_libre"));
         entretien.setCommentaire(rs.getString("commentaire"));
-        entretien.setCout(rs.getDouble("cout"));
-        entretien.setStatut(rs.getString("statut"));
+        entretien.setCout(rs.getDouble("cout_prevu"));
+        // Convertir statut DB (ENUM en MAJUSCULES) vers format modèle (minuscule avec underscore)
+        String statutDb = rs.getString("statut");
+        String statutModele;
+        if (statutDb == null) {
+            statutModele = null;
+        } else {
+            switch (statutDb) {
+                case "PLANIFIE": statutModele = "programme"; break;
+                case "EN_COURS": statutModele = "en_cours"; break;
+                case "TERMINE": statutModele = "termine"; break;
+                default: statutModele = statutDb; // autres valeurs: ANNULE, REPORTE, etc.
+            }
+        }
+        entretien.setStatut(statutModele);
         entretien.setKilometrage(rs.getInt("kilometrage"));
         
         // Créer l'objet Vehicule avec les données de la jointure (si disponibles)

@@ -19,8 +19,8 @@ import javax.swing.JScrollPane;
 import nexus_bmb_soft.menu.mode.ToolBarAccentColor;
 
 /**
- *
- * @author Raven
+ * Menu latéral avec gestion des événements et styles personnalisés
+ * @author BlaiseMUBADI
  */
 public class Menu extends JPanel {
 

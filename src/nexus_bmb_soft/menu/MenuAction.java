@@ -1,8 +1,8 @@
 package nexus_bmb_soft.menu;
 
 /**
- *
- * @author Raven
+ * Action de menu avec possibilité d'annulation
+ * @author BlaiseMUBADI
  */
 public class MenuAction {
 

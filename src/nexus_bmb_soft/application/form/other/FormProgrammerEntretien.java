@@ -1,17 +1,16 @@
 package nexus_bmb_soft.application.form.other;
 
-import nexus_bmb_soft.database.dao.EntretienDAO;
-import nexus_bmb_soft.database.dao.VehiculeDAO;
-import nexus_bmb_soft.models.Entretien;
-import nexus_bmb_soft.models.Vehicule;
-import nexus_bmb_soft.utils.IconUtils;
-
-import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import javax.swing.*;
+import nexus_bmb_soft.database.dao.EntretienDAO;
+import nexus_bmb_soft.database.dao.VehiculeDAO;
+import nexus_bmb_soft.models.Entretien;
+import nexus_bmb_soft.models.Vehicule;
+import nexus_bmb_soft.utils.IconUtils;
 
 /**
  * Formulaire pour programmer un nouvel entretien

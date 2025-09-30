@@ -427,15 +427,15 @@ public class FormHistoriqueAffectations extends JPanel {
                     cmbFiltreVehicule.addItem(new VehiculeItem(vehicule));
                 }
                 
-                // Charger les utilisateurs pour les filtres
-                List<Utilisateur> utilisateurs = utilisateurDAO.lireTous();
+                // Charger UNIQUEMENT les conducteurs pour les filtres
+                List<Utilisateur> conducteurs = utilisateurDAO.getTousConducteurs();
                 cacheUtilisateurs.clear();
                 cmbFiltreConducteur.removeAllItems();
-                cmbFiltreConducteur.addItem(new ConducteurItem(null)); // "Tous"
+                cmbFiltreConducteur.addItem(new ConducteurItem(null)); // "Tous les conducteurs"
                 
-                for (Utilisateur utilisateur : utilisateurs) {
-                    cacheUtilisateurs.put(utilisateur.getId(), utilisateur);
-                    cmbFiltreConducteur.addItem(new ConducteurItem(utilisateur));
+                for (Utilisateur conducteur : conducteurs) {
+                    cacheUtilisateurs.put(conducteur.getId(), conducteur);
+                    cmbFiltreConducteur.addItem(new ConducteurItem(conducteur));
                 }
                 
                 // Charger l'historique

@@ -614,4 +614,32 @@ public class UtilisateurDAO {
         
         return conducteursDisponibles;
     }
+    
+    /**
+     * Récupère TOUS les conducteurs (actifs et inactifs) pour les filtres et listes
+     */
+    public List<Utilisateur> getTousConducteurs() {
+        List<Utilisateur> conducteurs = new ArrayList<>();
+        
+        String sql = "SELECT * FROM utilisateur " +
+                    "WHERE role IN ('CONDUCTEUR', 'CONDUCTEUR_SENIOR') " +
+                    "ORDER BY nom, prenom";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                Utilisateur conducteur = mapResultSetToUtilisateur(rs);
+                conducteurs.add(conducteur);
+            }
+            
+            System.out.println("📋 " + conducteurs.size() + " conducteurs récupérés pour les filtres");
+            
+        } catch (SQLException e) {
+            System.err.println("❌ Erreur lors de la récupération de tous les conducteurs: " + e.getMessage());
+        }
+        
+        return conducteurs;
+    }
 }

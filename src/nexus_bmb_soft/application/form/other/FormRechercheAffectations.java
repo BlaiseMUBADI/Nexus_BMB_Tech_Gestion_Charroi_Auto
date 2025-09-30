@@ -338,14 +338,11 @@ public class FormRechercheAffectations extends JPanel {
             cmbVehicule.addItem(vehicule.getMatricule() + " - " + vehicule.getMarque());
         }
         
-        // Charger les conducteurs
+        // Charger UNIQUEMENT les conducteurs (optimisé)
         cmbConducteur.addItem("Tous les conducteurs");
-        List<Utilisateur> conducteurs = utilisateurDAO.lireTous();
+        List<Utilisateur> conducteurs = utilisateurDAO.getTousConducteurs();
         for (Utilisateur conducteur : conducteurs) {
-            if (conducteur.getRole() == RoleUtilisateur.CONDUCTEUR || 
-                conducteur.getRole() == RoleUtilisateur.CONDUCTEUR_SENIOR) {
-                cmbConducteur.addItem(conducteur.getNom() + " " + (conducteur.getPrenom() != null ? conducteur.getPrenom() : ""));
-            }
+            cmbConducteur.addItem(conducteur.getNom() + " " + (conducteur.getPrenom() != null ? conducteur.getPrenom() : ""));
         }
     }
     

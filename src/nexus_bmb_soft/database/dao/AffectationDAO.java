@@ -427,4 +427,104 @@ public class AffectationDAO {
         
         return affectations;
     }
+    
+    /**
+     * Synchronise automatiquement les statuts des affectations expirées
+     * Met à jour toutes les affectations dont la date de fin est dépassée
+     * @return Nombre d'affectations mises à jour
+     */
+    public int synchroniserAffectationsExpirees() {
+        String sql = "UPDATE affectation SET statut = 'terminee' " +
+                    "WHERE date_fin IS NOT NULL " +
+                    "AND date_fin < CURDATE() " +
+                    "AND statut IN ('en_cours', 'programmee')";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            int affectationsMisesAJour = pstmt.executeUpdate();
+            
+            if (affectationsMisesAJour > 0) {
+                LOGGER.info("🔄 " + affectationsMisesAJour + " affectations automatiquement terminées (date dépassée)");
+                
+                // Synchroniser aussi la disponibilité des véhicules
+                synchroniserDisponibiliteVehicules();
+            }
+            
+            return affectationsMisesAJour;
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors de la synchronisation des affectations expirées", e);
+            return 0;
+        }
+    }
+    
+    /**
+     * Met à jour la disponibilité de tous les véhicules selon leurs affectations actives
+     */
+    public void synchroniserDisponibiliteVehicules() {
+        String sql = "UPDATE vehicule v " +
+                    "LEFT JOIN affectation a ON v.id = a.vehicule_id " +
+                        "AND a.date_debut <= CURDATE() " +
+                        "AND (a.date_fin IS NULL OR a.date_fin >= CURDATE()) " +
+                        "AND a.statut = 'en_cours' " +
+                    "SET v.disponible = CASE " +
+                        "WHEN a.vehicule_id IS NULL THEN TRUE " +
+                        "ELSE FALSE " +
+                    "END";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            int vehiculesMisAJour = pstmt.executeUpdate();
+            LOGGER.info("🚗 " + vehiculesMisAJour + " véhicules synchronisés pour disponibilité");
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors de la synchronisation des véhicules", e);
+        }
+    }
+    
+    /**
+     * Effectue une synchronisation complète du système d'affectations
+     * À appeler au démarrage de l'application ou périodiquement
+     * @return Rapport de synchronisation
+     */
+    public String effectuerSynchronisationComplete() {
+        LOGGER.info("🔄 Début de la synchronisation complète du système d'affectations...");
+        
+        // 1. Synchroniser les affectations expirées
+        int affectationsTerminees = synchroniserAffectationsExpirees();
+        
+        // 2. Synchroniser les affectations qui doivent commencer aujourd'hui
+        String sqlCommencer = "UPDATE affectation SET statut = 'en_cours' " +
+                             "WHERE date_debut = CURDATE() " +
+                             "AND statut = 'programmee'";
+        
+        int affectationsCommencees = 0;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sqlCommencer)) {
+            
+            affectationsCommencees = pstmt.executeUpdate();
+            if (affectationsCommencees > 0) {
+                LOGGER.info("▶️ " + affectationsCommencees + " affectations démarrées aujourd'hui");
+            }
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors du démarrage des affectations", e);
+        }
+        
+        // 3. Synchroniser la disponibilité des véhicules
+        synchroniserDisponibiliteVehicules();
+        
+        String rapport = String.format(
+            "✅ Synchronisation terminée:\n" +
+            "   • %d affectations terminées automatiquement\n" +
+            "   • %d affectations démarrées aujourd'hui\n" +
+            "   • Disponibilité des véhicules mise à jour",
+            affectationsTerminees, affectationsCommencees
+        );
+        
+        LOGGER.info(rapport);
+        return rapport;
+    }
 }

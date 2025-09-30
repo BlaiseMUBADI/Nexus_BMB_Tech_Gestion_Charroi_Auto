@@ -1,26 +1,22 @@
 package nexus_bmb_soft.application.form.other;
 
-import nexus_bmb_soft.database.dao.AffectationDAO;
-import nexus_bmb_soft.database.dao.VehiculeDAO;
-import nexus_bmb_soft.database.dao.UtilisateurDAO;
-import nexus_bmb_soft.models.Affectation;
-import nexus_bmb_soft.models.Vehicule;
-import nexus_bmb_soft.models.Utilisateur;
-import nexus_bmb_soft.models.RoleUtilisateur;
-import nexus_bmb_soft.utils.IconUtils;
-
+import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.ArrayList;
+import nexus_bmb_soft.database.dao.AffectationDAO;
+import nexus_bmb_soft.database.dao.UtilisateurDAO;
+import nexus_bmb_soft.database.dao.VehiculeDAO;
+import nexus_bmb_soft.models.Affectation;
+import nexus_bmb_soft.models.Utilisateur;
+import nexus_bmb_soft.models.Vehicule;
+import nexus_bmb_soft.utils.IconUtils;
 
 /**
  * Interface de recherche avancée des affectations

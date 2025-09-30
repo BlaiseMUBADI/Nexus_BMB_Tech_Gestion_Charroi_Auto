@@ -1,27 +1,23 @@
 package nexus_bmb_soft.application.form.other;
 
-import nexus_bmb_soft.database.dao.AffectationDAO;
-import nexus_bmb_soft.database.dao.VehiculeDAO;
-import nexus_bmb_soft.database.dao.UtilisateurDAO;
-import nexus_bmb_soft.models.Affectation;
-import nexus_bmb_soft.models.Vehicule;
-import nexus_bmb_soft.models.Utilisateur;
-import nexus_bmb_soft.utils.IconUtils;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
-import javax.swing.border.CompoundBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Date;
-import java.util.Calendar;
+import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import nexus_bmb_soft.database.dao.AffectationDAO;
+import nexus_bmb_soft.database.dao.UtilisateurDAO;
+import nexus_bmb_soft.database.dao.VehiculeDAO;
+import nexus_bmb_soft.models.Affectation;
+import nexus_bmb_soft.models.Utilisateur;
+import nexus_bmb_soft.models.Vehicule;
 
 /**
  * Interface harmonisée pour consulter l'historique des affectations terminées
@@ -65,6 +61,7 @@ public class FormHistoriqueAffectations extends JPanel {
     private JButton btnVoirDetails;
     private JButton btnExporter;
     private JButton btnStatistiques;
+    private JButton btnSynchroniser;
     
     // Cache pour les véhicules et utilisateurs
     private Map<Integer, Vehicule> cacheVehicules;
@@ -402,10 +399,18 @@ public class FormHistoriqueAffectations extends JPanel {
         btnExporter.setPreferredSize(new Dimension(120, 35));
         btnExporter.addActionListener(e -> exporterDonnees());
         
+        btnSynchroniser = new JButton("⚡ Synchroniser");
+        btnSynchroniser.setBackground(new Color(231, 76, 60));
+        btnSynchroniser.setForeground(Color.WHITE);
+        btnSynchroniser.setPreferredSize(new Dimension(130, 35));
+        btnSynchroniser.setToolTipText("Termine automatiquement les affectations expirées");
+        btnSynchroniser.addActionListener(e -> synchroniserAffectations());
+        
         actionsPanel.add(btnRafraichir);
         actionsPanel.add(btnVoirDetails);
         actionsPanel.add(btnStatistiques);
         actionsPanel.add(btnExporter);
+        actionsPanel.add(btnSynchroniser);
         
         panel.add(paginationPanel, BorderLayout.WEST);
         panel.add(actionsPanel, BorderLayout.EAST);
@@ -754,5 +759,16 @@ public class FormHistoriqueAffectations extends JPanel {
     
     private LocalDate convertToLocalDate(Date date) {
         return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+    }
+    
+    /**
+     * Lance la synchronisation automatique des affectations expirées
+     */
+    private void synchroniserAffectations() {
+        // Utiliser la classe utilitaire pour la synchronisation
+        nexus_bmb_soft.utils.ActionsSysteme.lancerSynchronisationManuelle();
+        
+        // Rafraîchir l'historique après synchronisation
+        chargerHistorique();
     }
 }

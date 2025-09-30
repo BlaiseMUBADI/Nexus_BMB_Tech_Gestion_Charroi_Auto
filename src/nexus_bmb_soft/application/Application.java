@@ -96,6 +96,11 @@ public class Application extends javax.swing.JFrame {
             //  app.applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
             app.setVisible(true);
             //nexus_bmb_soft.database.DatabaseTester.runFullTest();
+            
+            // 🚀 Initialiser le synchronisateur automatique des affectations
+            nexus_bmb_soft.utils.SynchronisateurAffectations.initialiser(
+                nexus_bmb_soft.utils.SynchronisateurAffectations.Configuration.FREQUENT
+            );
         });
         
         

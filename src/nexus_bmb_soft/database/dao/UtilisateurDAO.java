@@ -590,7 +590,9 @@ public class UtilisateurDAO {
                     "AND a.conducteur_id IS NULL " +
                     "ORDER BY u.nom";
         
-        try (PreparedStatement pstmt = connection.prepareStatement(sql);
+        // Utiliser try-with-resources pour obtenir une nouvelle connexion
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             
             while (rs.next()) {

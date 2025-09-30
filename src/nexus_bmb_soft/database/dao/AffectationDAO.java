@@ -1,18 +1,17 @@
 package nexus_bmb_soft.database.dao;
 
-import nexus_bmb_soft.database.DatabaseConnection;
-import nexus_bmb_soft.models.Affectation;
-import nexus_bmb_soft.models.Vehicule;
-import nexus_bmb_soft.models.Utilisateur;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nexus_bmb_soft.database.DatabaseConnection;
+import nexus_bmb_soft.models.Affectation;
+import nexus_bmb_soft.models.Utilisateur;
+import nexus_bmb_soft.models.Vehicule;
 
 /**
  * DAO (Data Access Object) pour la gestion des affectations

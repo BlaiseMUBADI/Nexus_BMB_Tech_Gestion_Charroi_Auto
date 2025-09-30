@@ -128,7 +128,7 @@ public class FormNouvelleAffectation extends JPanel {
         mainPanel.setBorder(BorderFactory.createRaisedBevelBorder());
         
         // Titre principal harmonisé
-        JLabel lblTitrePrincipal = new JLabel("🚗➤👤 Nouvelle Affectation Véhicule-Conducteur", JLabel.CENTER);
+        JLabel lblTitrePrincipal = new JLabel("Nouvelle Affectation Véhicule-Conducteur", JLabel.CENTER);
         lblTitrePrincipal.setFont(lblTitrePrincipal.getFont().deriveFont(Font.BOLD, 20f));
         lblTitrePrincipal.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         lblTitrePrincipal.setOpaque(true);
@@ -181,7 +181,7 @@ public class FormNouvelleAffectation extends JPanel {
     private JPanel createSelectionPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new CompoundBorder(
-            BorderFactory.createTitledBorder("🎯 Sélection Véhicule et Conducteur"),
+            BorderFactory.createTitledBorder("Sélection Véhicule et Conducteur"),
             BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ));
         
@@ -225,7 +225,7 @@ public class FormNouvelleAffectation extends JPanel {
         // Bouton de vérification
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
-        btnVerifierDisponibilite = new JButton("🔍 Vérifier Disponibilité");
+        btnVerifierDisponibilite = new JButton("Vérifier Disponibilité");
         btnVerifierDisponibilite.setBackground(new Color(52, 152, 219));
         btnVerifierDisponibilite.setForeground(Color.WHITE);
         btnVerifierDisponibilite.addActionListener(e -> verifierDisponibilite());
@@ -242,7 +242,7 @@ public class FormNouvelleAffectation extends JPanel {
     
     private JPanel createInfoSelectionPanel() {
         JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
-        panel.setBorder(BorderFactory.createTitledBorder("ℹ️ Informations"));
+        panel.setBorder(BorderFactory.createTitledBorder("Informations"));
         
         // Info véhicules
         JPanel vehiculesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -351,17 +351,18 @@ public class FormNouvelleAffectation extends JPanel {
         
         return panel;
     }
-    
-    private void chargerDonnees() {
+
+    private void chargerDonnees() 
+    {
         // Vérifier que les DAO sont disponibles (base de données connectée)
         if (vehiculeDAO == null || utilisateurDAO == null) {
-            System.out.println("⚠️ Impossible de charger les données - Base de données indisponible");
+            System.out.println("Impossible de charger les données - Base de données indisponible");
             return;
         }
         
         try {
             // 🎯 RÉCUPÉRER UNIQUEMENT LES ÉLÉMENTS RÉELLEMENT DISPONIBLES
-            System.out.println("🔄 Chargement des véhicules et conducteurs disponibles...");
+            System.out.println("Chargement des véhicules et conducteurs disponibles...");
             
             // Charger uniquement les véhicules sans affectation active
             List<Vehicule> vehiculesDisponibles = vehiculeDAO.getVehiculesDisponibles();

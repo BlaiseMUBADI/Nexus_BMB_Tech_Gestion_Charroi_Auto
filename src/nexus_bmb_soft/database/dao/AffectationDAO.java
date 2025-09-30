@@ -585,16 +585,17 @@ public class AffectationDAO {
                         "AND a.date_debut <= CURDATE() " +
                         "AND (a.date_fin IS NULL OR a.date_fin >= CURDATE()) " +
                         "AND a.statut = 'en_cours' " +
-                    "SET v.disponible = CASE " +
-                        "WHEN a.vehicule_id IS NULL THEN TRUE " +
-                        "ELSE FALSE " +
-                    "END";
+                    "SET v.statut = CASE " +
+                        "WHEN a.vehicule_id IS NULL THEN 'DISPONIBLE' " +
+                        "ELSE 'AFFECTE' " +
+                    "END " +
+                    "WHERE v.statut NOT IN ('MAINTENANCE', 'HORS_SERVICE', 'VENDU')";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             int vehiculesMisAJour = pstmt.executeUpdate();
-            LOGGER.info("🚗 " + vehiculesMisAJour + " véhicules synchronisés pour disponibilité");
+            LOGGER.info("🚗 " + vehiculesMisAJour + " véhicules synchronisés pour statut");
             
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "❌ Erreur lors de la synchronisation des véhicules", e);

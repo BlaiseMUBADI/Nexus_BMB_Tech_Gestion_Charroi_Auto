@@ -1,24 +1,89 @@
 package nexus_bmb_soft.models;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 
 /**
- * Classe modèle pour les véhicules
+ * Classe modèle pour les véhicules - Version enrichie
  * Correspond à la table 'vehicule' de la base de données
  * 
  * @author BlaiseMUBADI
  */
 public class Vehicule {
     
+    // Énumérations
+    public enum Statut {
+        DISPONIBLE, AFFECTE, MAINTENANCE, HORS_SERVICE, VENDU
+    }
+    
+    public enum Etat {
+        EXCELLENT, BON, MOYEN, MAUVAIS, CRITIQUE
+    }
+    
+    public enum Categorie {
+        LEGER, UTILITAIRE, POIDS_LOURD, SPECIAL
+    }
+    
+    public enum Carburant {
+        ESSENCE, DIESEL, HYBRIDE, ELECTRIQUE, GAZ
+    }
+    
+    // Champs de base
     private int id;
     private String matricule;
+    private String immatriculation;
     private String marque;
+    private String modele;
     private String type;
+    private Categorie categorie;
     private Integer annee;
-    private boolean disponible;
+    private String couleur;
+    private String numeroChasssis;
+    private String numeroMoteur;
+    private Carburant carburant;
+    private BigDecimal consommation100km;
+    private BigDecimal capaciteReservoir;
+    
+    // Kilométrage
+    private int kilometrageInitial;
+    private int kilometrageActuel;
+    private LocalDateTime kilometrageDerniereMaj;
+    
+    // Statut et état
+    private Statut statut;
+    private Etat etat;
+    private boolean disponible; // Maintenu pour compatibilité
+    
+    // Dates importantes
+    private LocalDate dateAcquisition;
+    private BigDecimal prixAcquisition;
+    private LocalDate dateMiseService;
     private LocalDate dateAssurance;
-    private LocalDate dateVidange;
+    private String compagnieAssurance;
+    private String policeAssurance;
     private LocalDate dateVisiteTechnique;
+    private String lieuVisiteTechnique;
+    private LocalDate dateDerniereVidange;
+    private Integer kmDerniereVidange;
+    
+    // Autres
+    private String localisation;
+    private Integer responsableId;
+    private String notes;
+    private boolean actif;
+    
+    // Nouveaux champs professionnels
+    private int periodiciteVidange; // Périodicité en kilomètres
+    private Statut statutVehicule;
+    private Etat etatVehicule;
+    private Categorie categorieVehicule;
+    private Carburant typeCarburant;
+    private String numeroSerie;
+    private LocalDate dateMiseEnService;
+    private LocalDate dateDerniereRevision;
+    private String observations;
     
     // Constructeurs
     public Vehicule() {
@@ -43,7 +108,7 @@ public class Vehicule {
         this.annee = annee;
         this.disponible = disponible;
         this.dateAssurance = dateAssurance;
-        this.dateVidange = dateVidange;
+        this.dateDerniereVidange = dateVidange;
         this.dateVisiteTechnique = dateVisiteTechnique;
     }
     
@@ -89,11 +154,22 @@ public class Vehicule {
     }
     
     public boolean isDisponible() {
+        // Nouveau système : utilise l'enum statut si disponible
+        if (statutVehicule != null) {
+            return statutVehicule == Statut.DISPONIBLE;
+        }
+        // Ancien système : utilise le boolean disponible pour compatibilité
         return disponible;
     }
     
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
+        // Synchronise avec le nouveau système
+        if (disponible) {
+            this.statutVehicule = Statut.DISPONIBLE;
+        } else {
+            this.statutVehicule = Statut.AFFECTE;
+        }
     }
     
     public LocalDate getDateAssurance() {
@@ -105,11 +181,11 @@ public class Vehicule {
     }
     
     public LocalDate getDateVidange() {
-        return dateVidange;
+        return dateDerniereVidange;
     }
     
     public void setDateVidange(LocalDate dateVidange) {
-        this.dateVidange = dateVidange;
+        this.dateDerniereVidange = dateVidange;
     }
     
     public LocalDate getDateVisiteTechnique() {
@@ -126,8 +202,8 @@ public class Vehicule {
      * Vérifie si le véhicule nécessite une vidange bientôt (dans les 30 prochains jours)
      */
     public boolean vidangeProche() {
-        if (dateVidange == null) return false;
-        return dateVidange.isBefore(LocalDate.now().plusDays(30));
+        if (dateDerniereVidange == null) return false;
+        return dateDerniereVidange.isBefore(LocalDate.now().plusDays(30));
     }
     
     /**
@@ -174,5 +250,131 @@ public class Vehicule {
     @Override
     public int hashCode() {
         return matricule != null ? matricule.hashCode() : 0;
+    }
+    
+    // Getters et Setters pour les nouveaux champs professionnels
+    
+    public int getKilometrageActuel() {
+        return kilometrageActuel;
+    }
+    
+    public void setKilometrageActuel(int kilometrageActuel) {
+        this.kilometrageActuel = kilometrageActuel;
+    }
+    
+    public int getKmDerniereVidange() {
+        return kmDerniereVidange != null ? kmDerniereVidange : 0;
+    }
+    
+    public void setKmDerniereVidange(int kmDerniereVidange) {
+        this.kmDerniereVidange = kmDerniereVidange;
+    }
+    
+    public int getPeriodiciteVidange() {
+        return periodiciteVidange;
+    }
+    
+    public void setPeriodiciteVidange(int periodiciteVidange) {
+        this.periodiciteVidange = periodiciteVidange;
+    }
+    
+    public Statut getStatutVehicule() {
+        return statutVehicule;
+    }
+    
+    public void setStatutVehicule(Statut statutVehicule) {
+        this.statutVehicule = statutVehicule;
+    }
+    
+    public Etat getEtatVehicule() {
+        return etatVehicule;
+    }
+    
+    public void setEtatVehicule(Etat etatVehicule) {
+        this.etatVehicule = etatVehicule;
+    }
+    
+    public Categorie getCategorieVehicule() {
+        return categorieVehicule;
+    }
+    
+    public void setCategorieVehicule(Categorie categorieVehicule) {
+        this.categorieVehicule = categorieVehicule;
+    }
+    
+    public Carburant getTypeCarburant() {
+        return typeCarburant;
+    }
+    
+    public void setTypeCarburant(Carburant typeCarburant) {
+        this.typeCarburant = typeCarburant;
+    }
+    
+    public String getNumeroSerie() {
+        return numeroSerie;
+    }
+    
+    public void setNumeroSerie(String numeroSerie) {
+        this.numeroSerie = numeroSerie;
+    }
+    
+    public LocalDate getDateMiseEnService() {
+        return dateMiseEnService;
+    }
+    
+    public void setDateMiseEnService(LocalDate dateMiseEnService) {
+        this.dateMiseEnService = dateMiseEnService;
+    }
+    
+    public LocalDate getDateDerniereRevision() {
+        return dateDerniereRevision;
+    }
+    
+    public void setDateDerniereRevision(LocalDate dateDerniereRevision) {
+        this.dateDerniereRevision = dateDerniereRevision;
+    }
+    
+    public String getObservations() {
+        return observations;
+    }
+    
+    public void setObservations(String observations) {
+        this.observations = observations;
+    }
+    
+    // Méthodes utilitaires professionnelles
+    
+    /**
+     * Calcule les kilomètres restants avant la prochaine vidange
+     */
+    public int getKmAvantVidange() {
+        if (kmDerniereVidange == null || kmDerniereVidange <= 0 || periodiciteVidange <= 0) return 0;
+        int kmProchaine = kmDerniereVidange + periodiciteVidange;
+        return Math.max(0, kmProchaine - kilometrageActuel);
+    }
+    
+    /**
+     * Vérifie si le véhicule nécessite une vidange selon le kilométrage
+     */
+    public boolean vidangeNecessaireKm() {
+        return getKmAvantVidange() <= 0 && periodiciteVidange > 0;
+    }
+    
+    /**
+     * Calcule l'âge du véhicule en années
+     */
+    public int getAgeVehicule() {
+        if (dateMiseEnService == null) return 0;
+        return Period.between(dateMiseEnService, LocalDate.now()).getYears();
+    }
+    
+    /**
+     * Détermine la priorité d'entretien du véhicule
+     */
+    public String getPrioriteEntretien() {
+        if (vidangeNecessaireKm() || vidangeProche()) return "URGENT";
+        if (assuranceProche() || visiteTechniqueProche()) return "ELEVEE";
+        if (getKmAvantVidange() <= 500) return "MOYENNE";
+        return "NORMALE";
     }
 }

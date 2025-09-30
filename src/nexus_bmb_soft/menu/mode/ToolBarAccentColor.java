@@ -24,8 +24,8 @@ import javax.swing.UIManager;
 import nexus_bmb_soft.menu.Menu;
 
 /**
- *
- * @author Raven
+ * Composant pour choisir la couleur d'accentuation de la barre d'outils
+ * @author BlaiseMUBADI
  */
 public class ToolBarAccentColor extends JPanel {
 

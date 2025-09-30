@@ -1,8 +1,8 @@
 package nexus_bmb_soft.menu;
 
 /**
- *
- * @author Raven
+ * Interface pour gérer les événements de menu
+ * @author BlaiseMUBADI
  */
 public interface MenuEvent {
 

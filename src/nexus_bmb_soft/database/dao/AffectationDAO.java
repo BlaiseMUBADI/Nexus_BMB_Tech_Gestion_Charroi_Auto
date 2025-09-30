@@ -130,6 +130,40 @@ public class AffectationDAO {
     }
     
     /**
+     * Récupère TOUTES les affectations (actives, programmées, terminées) avec statut calculé
+     * @param limite Nombre maximum d'enregistrements (0 = pas de limite)
+     * @return Liste complète des affectations avec statuts
+     */
+    public List<Affectation> listerToutesAffectations(int limite) {
+        String sql = "SELECT a.*, " +
+                    "v.matricule, v.marque, v.type, " +
+                    "u.nom, u.prenom, u.matricule as conducteur_matricule, " +
+                    // Calcul automatique du statut selon les dates
+                    "CASE " +
+                        "WHEN a.date_debut > CURDATE() THEN 'programmee' " +
+                        "WHEN a.date_fin IS NULL OR a.date_fin >= CURDATE() THEN 'en_cours' " +
+                        "ELSE 'terminee' " +
+                    "END as statut_calcule " +
+                    "FROM affectation a " +
+                    "INNER JOIN vehicule v ON a.vehicule_id = v.id " +
+                    "INNER JOIN utilisateur u ON a.conducteur_id = u.id " +
+                    "ORDER BY " +
+                        // Ordre prioritaire : en_cours, programmee, puis terminee
+                        "CASE " +
+                            "WHEN a.date_debut > CURDATE() THEN 2 " +
+                            "WHEN a.date_fin IS NULL OR a.date_fin >= CURDATE() THEN 1 " +
+                            "ELSE 3 " +
+                        "END, " +
+                        "a.date_debut DESC";
+        
+        if (limite > 0) {
+            sql += " LIMIT " + limite;
+        }
+        
+        return executerRequeteAffectationsAvecStatut(sql);
+    }
+    
+    /**
      * Recherche des affectations par conducteur
      * @param conducteurId ID du conducteur
      * @return Liste des affectations du conducteur
@@ -429,6 +463,89 @@ public class AffectationDAO {
     }
     
     /**
+     * Exécute une requête SQL et retourne une liste d'affectations avec statut calculé
+     */
+    private List<Affectation> executerRequeteAffectationsAvecStatut(String sql) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            return executerRequeteAffectationsAvecStatut(pstmt);
+            
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "❌ Erreur lors de l'exécution de la requête avec statut", e);
+            return new ArrayList<>();
+        }
+    }
+    
+    /**
+     * Exécute une PreparedStatement et retourne une liste d'affectations avec statut calculé
+     */
+    private List<Affectation> executerRequeteAffectationsAvecStatut(PreparedStatement pstmt) throws SQLException {
+        List<Affectation> affectations = new ArrayList<>();
+        
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Affectation affectation = new Affectation();
+                
+                // Données de l'affectation
+                affectation.setId(rs.getInt("id"));
+                affectation.setVehiculeId(rs.getInt("vehicule_id"));
+                affectation.setConducteurId(rs.getInt("conducteur_id"));
+                
+                Date dateDebut = rs.getDate("date_debut");
+                if (dateDebut != null) {
+                    affectation.setDateDebut(dateDebut.toLocalDate());
+                }
+                
+                Date dateFin = rs.getDate("date_fin");
+                if (dateFin != null) {
+                    affectation.setDateFin(dateFin.toLocalDate());
+                }
+                
+                affectation.setMotif(rs.getString("motif"));
+                
+                // NOUVEAU : Récupérer le statut calculé par SQL
+                try {
+                    String statutCalcule = rs.getString("statut_calcule");
+                    affectation.setStatut(statutCalcule);
+                } catch (SQLException e) {
+                    // Si pas de statut calculé, le déterminer manuellement
+                    String statut = determinerStatut(affectation.getDateDebut(), affectation.getDateFin());
+                    affectation.setStatut(statut);
+                }
+                
+                // Créer l'objet Vehicule avec les données de la jointure
+                try {
+                    Vehicule vehicule = new Vehicule();
+                    vehicule.setId(rs.getInt("vehicule_id"));
+                    vehicule.setMatricule(rs.getString("matricule"));
+                    vehicule.setMarque(rs.getString("marque"));
+                    vehicule.setType(rs.getString("type"));
+                    affectation.setVehicule(vehicule);
+                } catch (SQLException e) {
+                    // Pas de données véhicule dans cette requête
+                }
+                
+                // Créer l'objet Utilisateur avec les données de la jointure
+                try {
+                    Utilisateur conducteur = new Utilisateur();
+                    conducteur.setId(rs.getInt("conducteur_id"));
+                    conducteur.setNom(rs.getString("nom"));
+                    conducteur.setPrenom(rs.getString("prenom"));
+                    conducteur.setMatricule(rs.getString("conducteur_matricule"));
+                    affectation.setConducteur(conducteur);
+                } catch (SQLException e) {
+                    // Pas de données conducteur dans cette requête
+                }
+                
+                affectations.add(affectation);
+            }
+        }
+        
+        return affectations;
+    }
+    
+    /**
      * Synchronise automatiquement les statuts des affectations expirées
      * Met à jour toutes les affectations dont la date de fin est dépassée
      * @return Nombre d'affectations mises à jour
@@ -445,7 +562,7 @@ public class AffectationDAO {
             int affectationsMisesAJour = pstmt.executeUpdate();
             
             if (affectationsMisesAJour > 0) {
-                LOGGER.info("🔄 " + affectationsMisesAJour + " affectations automatiquement terminées (date dépassée)");
+                LOGGER.info(affectationsMisesAJour + " affectations automatiquement terminées (date dépassée)");
                 
                 // Synchroniser aussi la disponibilité des véhicules
                 synchroniserDisponibiliteVehicules();

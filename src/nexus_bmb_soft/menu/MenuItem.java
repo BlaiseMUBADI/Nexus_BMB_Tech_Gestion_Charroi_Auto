@@ -23,8 +23,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
- *
- * @author Raven
+ * Élément de menu avec sous-menus et animation
+ * @author BlaiseMUBADI
  */
 public class MenuItem extends JPanel {
 

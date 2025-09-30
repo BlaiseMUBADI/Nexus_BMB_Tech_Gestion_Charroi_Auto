@@ -4,8 +4,8 @@ import com.formdev.flatlaf.util.Animator;
 import java.util.HashMap;
 
 /**
- *
- * @author Raven
+ * Animation pour les éléments de menu
+ * @author BlaiseMUBADI
  */
 public class MenuAnimation {
 

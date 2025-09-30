@@ -18,8 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 /**
- *
- * @author Raven
+ * Composant pour changer entre les modes clair et sombre
+ * @author BlaiseMUBADI
  */
 public class LightDarkMode extends JPanel {
 

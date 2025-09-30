@@ -239,6 +239,7 @@ public class DatabaseManager {
                     "type_entretien VARCHAR(50)," +
                     "commentaire TEXT," +
                     "cout DECIMAL(10,2)," +
+                    "kilometrage INT," +
                     "statut ENUM('programme', 'en_cours', 'termine') DEFAULT 'programme'," +
                     "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                     "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
@@ -355,6 +356,7 @@ public class DatabaseManager {
                     "type_entretien VARCHAR(50)," +
                     "commentaire TEXT," +
                     "cout DECIMAL(10,2)," +
+                    "kilometrage INT," +
                     "statut ENUM('programme', 'en_cours', 'termine') DEFAULT 'programme'," +
                     "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                     "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +

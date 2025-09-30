@@ -2,9 +2,11 @@ package nexus_bmb_soft.application.form.other;
 
 import com.formdev.flatlaf.FlatClientProperties;
 
+
 /**
- *
- * @author Raven
+ * Formulaire par défaut avec un label centré
+ * 
+ * @author BlaiseMUBADI
  */
 public class DefaultForm extends javax.swing.JPanel {
 

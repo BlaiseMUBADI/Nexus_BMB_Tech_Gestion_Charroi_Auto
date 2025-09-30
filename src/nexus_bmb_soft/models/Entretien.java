@@ -16,6 +16,9 @@ public class Entretien {
     private LocalDate dateEntretien;
     private String typeEntretien;
     private String commentaire;
+    private double cout;
+    private String statut; // programme, en_cours, termine
+    private int kilometrage; // Kilométrage au moment de l'entretien
     
     // Objet lié (pour les jointures)
     private Vehicule vehicule;
@@ -37,6 +40,22 @@ public class Entretien {
         this.dateEntretien = dateEntretien;
         this.typeEntretien = typeEntretien;
         this.commentaire = commentaire;
+    }
+    
+    /**
+     * Constructeur complet avec tous les champs
+     */
+    public Entretien(int id, int vehiculeId, LocalDate dateEntretien, 
+                    String typeEntretien, String commentaire, double cout, 
+                    String statut, int kilometrage) {
+        this.id = id;
+        this.vehiculeId = vehiculeId;
+        this.dateEntretien = dateEntretien;
+        this.typeEntretien = typeEntretien;
+        this.commentaire = commentaire;
+        this.cout = cout;
+        this.statut = statut;
+        this.kilometrage = kilometrage;
     }
     
     // Getters et Setters
@@ -88,6 +107,30 @@ public class Entretien {
         this.vehicule = vehicule;
     }
     
+    public double getCout() {
+        return cout;
+    }
+    
+    public void setCout(double cout) {
+        this.cout = cout;
+    }
+    
+    public String getStatut() {
+        return statut;
+    }
+    
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+    
+    public int getKilometrage() {
+        return kilometrage;
+    }
+    
+    public void setKilometrage(int kilometrage) {
+        this.kilometrage = kilometrage;
+    }
+    
     // Méthodes utilitaires
     
     /**
@@ -137,6 +180,52 @@ public class Entretien {
                type.contains("pneus") || 
                type.contains("lavage") ||
                type.contains("vérification");
+    }
+    
+    /**
+     * Vérifie si l'entretien est programmé
+     */
+    public boolean isProgramme() {
+        return "programme".equals(statut);
+    }
+    
+    /**
+     * Vérifie si l'entretien est en cours
+     */
+    public boolean isEnCours() {
+        return "en_cours".equals(statut);
+    }
+    
+    /**
+     * Vérifie si l'entretien est terminé
+     */
+    public boolean isTermine() {
+        return "termine".equals(statut);
+    }
+    
+    /**
+     * Retourne le statut formaté pour l'affichage
+     */
+    public String getStatutAffichage() {
+        if (statut == null) return "Non défini";
+        switch (statut) {
+            case "programme":
+                return "Programmé";
+            case "en_cours":
+                return "En cours";
+            case "termine":
+                return "Terminé";
+            default:
+                return statut;
+        }
+    }
+    
+    /**
+     * Retourne le coût formaté pour l'affichage
+     */
+    public String getCoutFormate() {
+        if (cout <= 0) return "Non défini";
+        return String.format("%.2f €", cout);
     }
     
     /**

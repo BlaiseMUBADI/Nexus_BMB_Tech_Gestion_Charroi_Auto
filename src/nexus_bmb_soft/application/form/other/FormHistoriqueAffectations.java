@@ -287,7 +287,7 @@ public class FormHistoriqueAffectations extends JPanel {
         // Configuration du modèle de table
         String[] colonnes = {
             "ID", "Véhicule", "Matricule", "Conducteur", 
-            "Date Début", "Date Fin", "Durée", "Motif", "Terminée le"
+            "Date Début", "Date Fin", "Durée", "Statut", "Motif"
         };
         
         modelHistorique = new DefaultTableModel(colonnes, 0) {
@@ -460,7 +460,7 @@ public class FormHistoriqueAffectations extends JPanel {
             // Pour cette version simplifiée, on charge tout l'historique
             // Dans une version réelle, on utiliserait la pagination côté base de données
             int taillePage = (Integer) spnTaillePage.getValue();
-            List<Affectation> historique = affectationDAO.listerHistorique(taillePage * 10); // Limite élargie
+            List<Affectation> historique = affectationDAO.listerToutesAffectations(taillePage * 10); // Toutes les affectations avec statuts
             
             modelHistorique.setRowCount(0);
             
@@ -486,7 +486,7 @@ public class FormHistoriqueAffectations extends JPanel {
                         affectation.getMotif().substring(0, 47) + "..." : 
                         affectation.getMotif()) : "";
                 
-                String dateTerminaison = formatDate(LocalDate.now()); // Simplification
+                String statut = affectation.getStatut(); // Statut calculé ou depuis la BDD
                 
                 modelHistorique.addRow(new Object[]{
                     affectation.getId(),
@@ -497,7 +497,7 @@ public class FormHistoriqueAffectations extends JPanel {
                     dateFin,
                     duree,
                     motif,
-                    dateTerminaison
+                    statut
                 });
             }
             

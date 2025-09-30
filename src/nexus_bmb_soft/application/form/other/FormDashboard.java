@@ -4,8 +4,9 @@ import com.formdev.flatlaf.FlatClientProperties;
 import raven.toast.Notifications;
 
 /**
- *
- * @author Raven
+ * Formulaire du tableau de bord
+ * 
+ * @author BlaiseMUBADI
  */
 public class FormDashboard extends javax.swing.JPanel {
 

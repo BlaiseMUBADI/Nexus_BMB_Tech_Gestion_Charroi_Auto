@@ -21,8 +21,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 /**
- *
- * @author Raven
+ * Sous-menu contextuel avec style personnalisé
+ * @author BlaiseMUBADI
  */
 public class PopupSubmenu extends JPanel {
 

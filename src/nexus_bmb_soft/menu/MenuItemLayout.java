@@ -9,8 +9,8 @@ import java.awt.LayoutManager;
 import javax.swing.JLabel;
 
 /**
- *
- * @author Raven
+ * Élément de menu avec sous-menus et animation
+ * @author BlaiseMUBADI
  */
 public class MenuItemLayout implements LayoutManager {
 

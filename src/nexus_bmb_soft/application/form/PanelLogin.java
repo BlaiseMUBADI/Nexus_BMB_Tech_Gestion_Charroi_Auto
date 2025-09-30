@@ -4,9 +4,11 @@ import com.formdev.flatlaf.FlatClientProperties;
 import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 
+
 /**
- *
- * @author Raven
+ * Panneau de login avec style personnalisé
+ * 
+ * @author BlaiseMUBADI
  */
 public class PanelLogin extends JPanel {
 

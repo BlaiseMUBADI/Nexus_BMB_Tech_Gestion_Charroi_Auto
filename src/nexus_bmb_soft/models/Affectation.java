@@ -18,6 +18,9 @@ public class Affectation {
     private LocalDate dateFin;
     private String motif;
     
+    // Statut calculé (peut être surchargé depuis la base de données)
+    private String statut;
+    
     // Objets liés (pour les jointures)
     private Vehicule vehicule;
     private Utilisateur conducteur;
@@ -108,6 +111,13 @@ public class Affectation {
         this.conducteur = conducteur;
     }
     
+    /**
+     * Définit le statut de l'affectation (surchargé depuis la base de données)
+     */
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+    
     // Méthodes utilitaires
     
     /**
@@ -146,8 +156,15 @@ public class Affectation {
     
     /**
      * Retourne le statut de l'affectation
+     * Utilise le statut personnalisé s'il est défini, sinon calcule automatiquement
      */
     public String getStatut() {
+        // Si un statut personnalisé est défini (depuis la BDD par exemple), l'utiliser
+        if (statut != null && !statut.trim().isEmpty()) {
+            return statut;
+        }
+        
+        // Sinon, calculer automatiquement
         if (isProgrammee()) return "Programmée";
         if (isActive()) return "En cours";
         if (isTerminee()) return "Terminée";

@@ -8,6 +8,9 @@ import nexus_bmb_soft.application.form.other.FormRechercheEtats;
 import nexus_bmb_soft.application.form.other.FormGestionConducteurs;
 import nexus_bmb_soft.application.form.other.FormGestionGestionnaires;
 import nexus_bmb_soft.application.form.other.FormGestionRoles;
+import nexus_bmb_soft.application.form.other.FormProgrammerEntretien;
+import nexus_bmb_soft.application.form.other.FormHistoriqueMaintenance;
+import nexus_bmb_soft.application.form.other.FormAlertesEcheances;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -35,8 +38,9 @@ import nexus_bmb_soft.menu.Menu;
 import nexus_bmb_soft.menu.MenuAction;
 
 /**
- *
- * @author Raven
+ * Formulaire principal de l'application
+ * 
+ * @author BlaiseMUBADI
  */
 public class MainForm extends JLayeredPane {
 
@@ -125,9 +129,18 @@ public class MainForm extends JLayeredPane {
                 }
             } else if (index == 3) { // OPÉRATIONS - Entretien & Maintenance
                 if (subIndex == 0) {
+                    // Menu principal "Entretien & Maintenance"
                     Application.showForm(new FormEntretien());
+                } else if (subIndex == 1) {
+                    // Sous-menu "Programmer Entretien"
+                    Application.showForm(new FormProgrammerEntretien());
+                } else if (subIndex == 2) {
+                    // Sous-menu "Historique Maintenance"
+                    Application.showForm(new FormHistoriqueMaintenance());
+                } else if (subIndex == 3) {
+                    // Sous-menu "Alertes Échéances"
+                    Application.showForm(new FormAlertesEcheances());
                 } else {
-                    // Sous-menus de l'entretien (à implémenter plus tard)
                     Application.showForm(new DefaultForm("Entretien - Sous-menu " + subIndex));
                 }
             } else if (index == 4) { // ADMINISTRATION - Utilisateurs

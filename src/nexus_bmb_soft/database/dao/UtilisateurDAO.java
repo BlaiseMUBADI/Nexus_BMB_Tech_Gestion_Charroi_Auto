@@ -1,13 +1,12 @@
 package nexus_bmb_soft.database.dao;
 
-import nexus_bmb_soft.database.DatabaseConnection;
-import nexus_bmb_soft.models.Utilisateur;
-import nexus_bmb_soft.models.RoleUtilisateur;
-
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import nexus_bmb_soft.database.DatabaseConnection;
+import nexus_bmb_soft.models.RoleUtilisateur;
+import nexus_bmb_soft.models.Utilisateur;
 
 /**
  * DAO pour la gestion des utilisateurs

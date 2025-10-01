@@ -12,7 +12,6 @@ import nexus_bmb_soft.database.dao.DashboardAdvancedDAO;
 import nexus_bmb_soft.database.dao.DashboardAdvancedDAO.DataPoint;
 import nexus_bmb_soft.utils.ModernChartComponents.*;
 import nexus_bmb_soft.utils.AdvancedChartComponents.*;
-import nexus_bmb_soft.utils.DashboardFilters;
 
 /**
  * Tableau de bord moderne avec graphiques interactifs
@@ -40,9 +39,6 @@ public class FormDashboard extends javax.swing.JPanel {
     // Cartes KPI dynamiques (références pour mise à jour)
     private ModernKPICard[] kpiCards;
     
-    // Composant de filtres
-    private DashboardFilters filtersPanel;
-    
     public FormDashboard() {
         this.dashboardDAO = new DashboardDAO();
         this.advancedDAO = new DashboardAdvancedDAO();
@@ -59,24 +55,11 @@ public class FormDashboard extends javax.swing.JPanel {
         JPanel headerPanel = createHeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
         
-        // Panel de filtres
-        filtersPanel = new DashboardFilters();
-        filtersPanel.addFilterChangeListener(criteria -> {
-            System.out.println("🔧 Filtres appliqués: " + criteria.toString());
-            refreshDashboardWithFilters(criteria);
-        });
-        
-        // Panel central combinant filtres et contenu
-        JPanel centralPanel = new JPanel(new BorderLayout());
-        centralPanel.add(filtersPanel, BorderLayout.NORTH);
-        
         // Contenu principal avec scroll
         JScrollPane scrollPane = new JScrollPane(createMainContent());
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        centralPanel.add(scrollPane, BorderLayout.CENTER);
-        
-        add(centralPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
         
         // Charger les données initiales
         refreshDashboard();
@@ -387,33 +370,6 @@ public class FormDashboard extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, 
                     "Erreur lors de la mise à jour des données : " + e.getMessage(), 
                     "Erreur Dashboard", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-    }
-    
-    /**
-     * Actualise le dashboard avec des critères de filtrage
-     */
-    private void refreshDashboardWithFilters(DashboardFilters.FilterCriteria criteria) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                System.out.println("🔍 Actualisation avec filtres: " + criteria.toString());
-                
-                // Pour l'instant, appeler la méthode standard
-                // TODO: Implémenter la logique de filtrage dans les DAOs
-                refreshDashboard();
-                
-                // Afficher un résumé des filtres appliqués
-                if (filtersPanel != null) {
-                    String summary = filtersPanel.getFilterSummary();
-                    System.out.println("📊 Filtres actifs: " + summary);
-                }
-                
-            } catch (Exception e) {
-                System.err.println("❌ Erreur lors de l'actualisation avec filtres: " + e.getMessage());
-                JOptionPane.showMessageDialog(this, 
-                    "Erreur lors de l'application des filtres : " + e.getMessage(), 
-                    "Erreur Filtres", JOptionPane.ERROR_MESSAGE);
             }
         });
     }

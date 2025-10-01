@@ -127,12 +127,14 @@ public class DashboardAdvancedDAO {
         List<DataPoint> distribution = new ArrayList<>();
         String sql = """
             SELECT 
-                type_entretien,
+                COALESCE(te.nom, e.type_entretien_libre, 'Autre') as type_entretien,
                 COUNT(*) as count,
                 ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM entretien), 1) as percentage
-            FROM entretien 
-            GROUP BY type_entretien
+            FROM entretien e
+            LEFT JOIN type_entretien te ON e.type_entretien_id = te.id
+            GROUP BY COALESCE(te.nom, e.type_entretien_libre, 'Autre')
             ORDER BY count DESC
+            LIMIT 10
         """;
         
         try (Connection conn = DatabaseConnection.getConnection();

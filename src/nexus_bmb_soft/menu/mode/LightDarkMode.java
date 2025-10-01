@@ -48,16 +48,16 @@ public class LightDarkMode extends JPanel {
         putClientProperty(FlatClientProperties.STYLE, ""
                 + "arc:999;"
                 + "background:$Menu.lightdark.background");
-        buttonLight = new JButton("Light", new FlatSVGIcon("nexus_bmb_soft/menu/mode/light.svg"));
-        buttonDark = new JButton("Dark", new FlatSVGIcon("nexus_bmb_soft/menu/mode/dark.svg"));
+    // Use local icons provided in this package
+    buttonLight = new JButton("Light", new FlatSVGIcon("nexus_bmb_soft/menu/mode/light.svg"));
+    buttonDark = new JButton("Dark", new FlatSVGIcon("nexus_bmb_soft/menu/mode/dark.svg"));
         buttonLighDark = new JButton();
-        buttonLighDark.putClientProperty(FlatClientProperties.STYLE, ""
-                + "arc:999;"
-                + "background:$Menu.lightdark.button.background;"
-                + "foreground:$Menu.foreground;"
-                + "focusWidth:0;"
-                + "borderWidth:0;"
-                + "innerFocusWidth:0");
+    buttonLighDark.putClientProperty(FlatClientProperties.STYLE, ""
+        + "arc:999;"
+        + "background:$Menu.lightdark.button.background;"
+        + "foreground:$Menu.foreground;"
+        + "focusWidth:0;"
+        + "innerFocusWidth:0");
         buttonLighDark.addActionListener((ActionEvent e) -> {
             changeMode(!FlatLaf.isLafDark());
         });
@@ -101,30 +101,28 @@ public class LightDarkMode extends JPanel {
         addStyle(buttonLight, !isDark);
         addStyle(buttonDark, isDark);
         if (isDark) {
-            buttonLighDark.setIcon(new FlatSVGIcon("raven/menu/mode/dark.svg"));
+            buttonLighDark.setIcon(new FlatSVGIcon("nexus_bmb_soft/menu/mode/dark.svg"));
         } else {
-            buttonLighDark.setIcon(new FlatSVGIcon("raven/menu/mode/light.svg"));
+            buttonLighDark.setIcon(new FlatSVGIcon("nexus_bmb_soft/menu/mode/light.svg"));
         }
     }
 
     private void addStyle(JButton button, boolean style) {
         if (style) {
-            button.putClientProperty(FlatClientProperties.STYLE, ""
-                    + "arc:999;"
-                    + "background:$Menu.lightdark.button.background;"
-                    + "foreground:$Menu.foreground;"
-                    + "focusWidth:0;"
-                    + "borderWidth:0;"
-                    + "innerFocusWidth:0");
+        button.putClientProperty(FlatClientProperties.STYLE, ""
+            + "arc:999;"
+            + "background:$Menu.lightdark.button.background;"
+            + "foreground:$Menu.foreground;"
+            + "focusWidth:0;"
+            + "innerFocusWidth:0");
         } else {
-            button.putClientProperty(FlatClientProperties.STYLE, ""
-                    + "arc:999;"
-                    + "background:$Menu.lightdark.button.background;"
-                    + "foreground:$Menu.foreground;"
-                    + "focusWidth:0;"
-                    + "borderWidth:0;"
-                    + "innerFocusWidth:0;"
-                    + "background:null");
+        button.putClientProperty(FlatClientProperties.STYLE, ""
+            + "arc:999;"
+            + "background:$Menu.lightdark.button.background;"
+            + "foreground:$Menu.foreground;"
+            + "focusWidth:0;"
+            + "innerFocusWidth:0;"
+            + "background:null");
         }
     }
 

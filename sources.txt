@@ -33,6 +33,8 @@ C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Ch
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\database\TestVersionJava.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\database\dao\AffectationDAO.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\database\dao\AlerteEntretienDAO.java
+C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\database\dao\DashboardAdvancedDAO.java
+C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\database\dao\DashboardDAO.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\database\dao\EntretienDAO.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\database\dao\TypeEntretienDAO.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\database\dao\UtilisateurDAO.java
@@ -54,5 +56,8 @@ C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Ch
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\models\Utilisateur.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\models\Vehicule.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\utils\ActionsSysteme.java
+C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\utils\AdvancedChartComponents.java
+C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\utils\DashboardFilters.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\utils\IconUtils.java
+C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\utils\ModernChartComponents.java
 C:\Users\blais\Documents\NetBeansProjects\A_Projet_EFO\Nexus_BMB_Tech_Gestion_Charroi_Auto\src\nexus_bmb_soft\utils\SynchronisateurAffectations.java

@@ -24,6 +24,7 @@ if %ERRORLEVEL% == 0 (
     xcopy /s /y src\nexus_bmb_soft\icon build\classes\nexus_bmb_soft\icon\
     xcopy /s /y src\nexus_bmb_soft\theme build\classes\nexus_bmb_soft\theme\
     xcopy /s /y src\nexus_bmb_soft\menu\icon build\classes\nexus_bmb_soft\menu\icon\
+    xcopy /y src\nexus_bmb_soft\menu\mode\*.svg build\classes\nexus_bmb_soft\menu\mode\
     
     echo === RESSOURCES COPIÉES ===
 ) else (

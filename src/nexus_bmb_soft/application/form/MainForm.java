@@ -57,8 +57,7 @@ public class MainForm extends JLayeredPane {
         menuButton.putClientProperty(FlatClientProperties.STYLE, ""
                 + "background:$Menu.button.background;"
                 + "arc:999;"
-                + "focusWidth:0;"
-                + "borderWidth:0");
+                + "focusWidth:0;");
         menuButton.addActionListener((ActionEvent e) -> {
             setMenuFull(!menu.isMenuFull());
         });

@@ -3,6 +3,12 @@ package nexus_bmb_soft.application.form;
 import com.formdev.flatlaf.FlatClientProperties;
 import net.miginfocom.swing.MigLayout;
 import nexus_bmb_soft.application.Application;
+import nexus_bmb_soft.security.AuthenticationDAO;
+import nexus_bmb_soft.models.Utilisateur;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * Formulaire de login
@@ -11,9 +17,13 @@ import nexus_bmb_soft.application.Application;
  */
 public class LoginForm extends javax.swing.JPanel {
 
+    private AuthenticationDAO authDAO;
+    private Utilisateur currentUser;
+
     public LoginForm() {
         initComponents();
         init();
+        authDAO = new AuthenticationDAO();
     }
 
     private void init() {
@@ -27,8 +37,25 @@ public class LoginForm extends javax.swing.JPanel {
                 + "showCapsLock:true");
         cmdLogin.putClientProperty(FlatClientProperties.STYLE, ""
                 + "focusWidth:0");
-        txtUser.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "User Name");
-        txtPass.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Password");
+        txtUser.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Matricule ou Email");
+        txtPass.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Mot de passe");
+        
+        // Permettre la connexion avec la touche Entrée
+        KeyListener enterKeyListener = new KeyListener() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    performLogin();
+                }
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {}
+            @Override
+            public void keyTyped(KeyEvent e) {}
+        };
+        
+        txtUser.addKeyListener(enterKeyListener);
+        txtPass.addKeyListener(enterKeyListener);
     }
 
     @SuppressWarnings("unchecked")
@@ -82,8 +109,105 @@ public class LoginForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmdLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdLoginActionPerformed
-        Application.login();
+        performLogin();
     }//GEN-LAST:event_cmdLoginActionPerformed
+    
+    /**
+     * Effectue l'authentification avec validation des identifiants
+     */
+    private void performLogin() {
+        String username = txtUser.getText().trim();
+        String password = new String(txtPass.getPassword());
+        
+        // Validation des champs
+        if (username.isEmpty()) {
+            showError("Veuillez saisir votre nom d'utilisateur ou email.");
+            txtUser.requestFocus();
+            return;
+        }
+        
+        if (password.isEmpty()) {
+            showError("Veuillez saisir votre mot de passe.");
+            txtPass.requestFocus();
+            return;
+        }
+        
+        // Désactiver le bouton pendant l'authentification
+        cmdLogin.setEnabled(false);
+        cmdLogin.setText("Connexion...");
+        
+        // Authentification en arrière-plan pour ne pas bloquer l'UI
+        SwingWorker<AuthenticationDAO.AuthResult, Void> worker = new SwingWorker<AuthenticationDAO.AuthResult, Void>() {
+            @Override
+            protected AuthenticationDAO.AuthResult doInBackground() throws Exception {
+                return authDAO.authenticate(username, password);
+            }
+            
+            @Override
+            protected void done() {
+                try {
+                    AuthenticationDAO.AuthResult result = get();
+                    
+                    if (result.isSuccess()) {
+                        currentUser = result.getUser();
+                        showSuccess("Connexion réussie ! Bienvenue " + currentUser.getNomComplet());
+                        
+                        // Créer une session
+                        String sessionToken = authDAO.createSession(
+                            currentUser.getId(), 
+                            "localhost", 
+                            "Desktop Application"
+                        );
+                        
+                        if (sessionToken != null) {
+                            System.out.println("🔐 Session créée: " + sessionToken.substring(0, 8) + "...");
+                            System.out.println("👤 Utilisateur connecté: " + currentUser.getNomComplet() + 
+                                             " (" + currentUser.getRole().toString() + ")");
+                        }
+                        
+                        // Passer à l'interface principale
+                        Application.login();
+                        
+                    } else {
+                        showError(result.getMessage());
+                        txtPass.setText(""); // Effacer le mot de passe
+                        txtUser.requestFocus();
+                    }
+                    
+                } catch (Exception e) {
+                    showError("Erreur lors de la connexion: " + e.getMessage());
+                    e.printStackTrace();
+                } finally {
+                    // Réactiver le bouton
+                    cmdLogin.setEnabled(true);
+                    cmdLogin.setText("Login");
+                }
+            }
+        };
+        
+        worker.execute();
+    }
+    
+    /**
+     * Affiche un message d'erreur
+     */
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Erreur de connexion", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    /**
+     * Affiche un message de succès
+     */
+    private void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this, message, "Connexion réussie", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    /**
+     * Retourne l'utilisateur actuellement connecté
+     */
+    public Utilisateur getCurrentUser() {
+        return currentUser;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cmdLogin;

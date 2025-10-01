@@ -3,13 +3,14 @@ package nexus_bmb_soft.models;
 import java.time.LocalDateTime;
 
 /**
- * Classe modèle pour les utilisateurs
- * Correspond à la table 'utilisateur' de la base de données
+ * Classe modèle pour les utilisateurs - Intégrée avec le système d'authentification sécurisé
+ * Correspond à la table 'utilisateur' enrichie de la base de données
  * 
  * @author BlaiseMUBADI
  */
 public class Utilisateur {
     
+    // Colonnes existantes
     private int id;
     private String nom;
     private String prenom;
@@ -17,8 +18,28 @@ public class Utilisateur {
     private String email;
     private RoleUtilisateur role;
     private String statut; // ACTIF, INACTIF, SUSPENDU
-    private String motDePasseHash;
+    private String motDePasseHash; // Ancien système (conservé pour compatibilité)
+    private boolean actif;
     private LocalDateTime dateCreation;
+    private LocalDateTime updated_at;
+    
+    // Nouvelles colonnes de sécurité
+    private String username;
+    private String passwordHash; // Nouveau système sécurisé SHA-256
+    private String firstName;
+    private String lastName;
+    private boolean isActive;
+    private boolean isLocked;
+    private int failedLoginAttempts;
+    private LocalDateTime lastLogin;
+    private LocalDateTime lastFailedLogin;
+    private LocalDateTime passwordExpiresAt;
+    private boolean mustChangePassword;
+    private String phone;
+    private String department;
+    private String notes;
+    private Integer createdBy;
+    private Integer updatedBy;
     
     // Constructeurs
     public Utilisateur() {
@@ -206,4 +227,276 @@ public class Utilisateur {
     public int hashCode() {
         return Integer.hashCode(id);
     }
+    
+    // ========================================================================
+    // GETTERS/SETTERS POUR LES NOUVELLES COLONNES DE SÉCURITÉ
+    // ========================================================================
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+    
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    
+    public boolean isActive() {
+        return isActive;
+    }
+    
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+    
+    public boolean isLocked() {
+        return isLocked;
+    }
+    
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+    
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+    
+    public void setFailedLoginAttempts(int failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
+    }
+    
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+    
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+    
+    public LocalDateTime getLastFailedLogin() {
+        return lastFailedLogin;
+    }
+    
+    public void setLastFailedLogin(LocalDateTime lastFailedLogin) {
+        this.lastFailedLogin = lastFailedLogin;
+    }
+    
+    public LocalDateTime getPasswordExpiresAt() {
+        return passwordExpiresAt;
+    }
+    
+    public void setPasswordExpiresAt(LocalDateTime passwordExpiresAt) {
+        this.passwordExpiresAt = passwordExpiresAt;
+    }
+    
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+    
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public String getDepartment() {
+        return department;
+    }
+    
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+    
+    public String getNotes() {
+        return notes;
+    }
+    
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+    
+    public Integer getCreatedBy() {
+        return createdBy;
+    }
+    
+    public void setCreatedBy(Integer createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public Integer getUpdatedBy() {
+        return updatedBy;
+    }
+    
+    public void setUpdatedBy(Integer updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+    
+    public boolean isActif() {
+        return actif;
+    }
+    
+    public void setActif(boolean actif) {
+        this.actif = actif;
+    }
+    
+    public LocalDateTime getUpdated_at() {
+        return updated_at;
+    }
+    
+    public void setUpdated_at(LocalDateTime updated_at) {
+        this.updated_at = updated_at;
+    }
+    
+    // ========================================================================
+    // MÉTHODES UTILITAIRES POUR LA SÉCURITÉ
+    // ========================================================================
+    
+    /**
+     * Vérifie si le compte est valide pour la connexion
+     * Version simplifiée compatible avec la base de données actuelle
+     */
+    public boolean isValidForLogin() {
+        // Vérifier d'abord les propriétés de base
+        boolean baseActive = actif; // Propriété principale
+        boolean statusOk = (statut == null || "ACTIF".equals(statut));
+        
+        // Si les nouvelles propriétés sont disponibles, les utiliser aussi
+        boolean newPropsOk = true;
+        if (isActive != baseActive) {
+            // Si isActive est différent de actif, privilégier actif (base de données)
+            newPropsOk = baseActive;
+        }
+        
+        return baseActive && statusOk && newPropsOk && !isLocked;
+    }
+    
+    /**
+     * Vérifie si le mot de passe a expiré
+     */
+    public boolean isPasswordExpired() {
+        return passwordExpiresAt != null && passwordExpiresAt.isBefore(LocalDateTime.now());
+    }
+    
+    /**
+     * Retourne le nom complet basé sur les nouvelles colonnes si disponibles, sinon les anciennes
+     */
+    public String getDisplayName() {
+        if (firstName != null && lastName != null) {
+            return firstName + " " + lastName;
+        }
+        return getNomComplet();
+    }
+    
+    /**
+     * Retourne l'identifiant de connexion (username ou matricule)
+     */
+    public String getLoginIdentifier() {
+        return username != null ? username : matricule;
+    }
+    
+    /**
+     * Vérifie si l'utilisateur a le droit d'accéder à une fonctionnalité selon son rôle
+     */
+    public boolean hasPermission(String permission) {
+        // Implémentation basique selon les rôles
+        switch (role.getModernRole()) {
+            case ADMIN:
+                return true; // Admin a tous les droits
+            case GESTIONNAIRE:
+                return permission.startsWith("VEHICULE_") || 
+                       permission.startsWith("AFFECTATION_") ||
+                       permission.startsWith("ENTRETIEN_") ||
+                       permission.startsWith("REPORT_");
+            case MECANICIEN:
+                return permission.startsWith("ENTRETIEN_") ||
+                       permission.startsWith("VEHICULE_VIEW");
+            case CHAUFFEUR:
+                return permission.startsWith("AFFECTATION_VIEW_OWN") ||
+                       permission.startsWith("VEHICULE_VIEW");
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * Vérifie si l'utilisateur peut gérer un autre utilisateur
+     */
+    public boolean canManage(Utilisateur other) {
+        return this.role.canManage(other.role);
+    }
+    
+    /**
+     * Vérifie si l'utilisateur a une permission système spécifique
+     * Compatible avec le nouveau système de permissions granulaires
+     */
+    public boolean hasSystemPermission(String permissionCode) {
+        switch (this.role) {
+            case SUPER_ADMIN:
+                return true; // Tous droits
+            case ADMIN:
+                // Admin sauf système critique
+                return !permissionCode.equals("SYSTEM_BACKUP") && !permissionCode.equals("SYSTEM_CONFIG");
+            case GESTIONNAIRE:
+                // Permissions opérationnelles uniquement
+                return permissionCode.startsWith("VEHICLE_") || 
+                       permissionCode.startsWith("MAINTENANCE_") || 
+                       permissionCode.startsWith("ASSIGNMENT_") ||
+                       permissionCode.startsWith("ALERT_") ||
+                       permissionCode.startsWith("REPORT_");
+            case CONDUCTEUR_SENIOR:
+                // Lecture + quelques modifications
+                return permissionCode.equals("VEHICLE_READ") ||
+                       permissionCode.equals("MAINTENANCE_READ") ||
+                       permissionCode.equals("MAINTENANCE_CREATE") ||
+                       permissionCode.equals("MAINTENANCE_UPDATE") ||
+                       permissionCode.equals("ASSIGNMENT_READ") ||
+                       permissionCode.equals("ALERT_READ");
+            case CONDUCTEUR:
+                // Lecture uniquement
+                return permissionCode.equals("VEHICLE_READ") ||
+                       permissionCode.equals("ASSIGNMENT_READ") ||
+                       permissionCode.equals("ALERT_READ");
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * Méthode simplifiée pour vérifier les permissions courantes
+     */
+    public boolean canCreateVehicle() { return hasSystemPermission("VEHICLE_CREATE"); }
+    public boolean canUpdateVehicle() { return hasSystemPermission("VEHICLE_UPDATE"); }
+    public boolean canDeleteVehicle() { return hasSystemPermission("VEHICLE_DELETE"); }
+    public boolean canCreateMaintenance() { return hasSystemPermission("MAINTENANCE_CREATE"); }
+    public boolean canManageUsers() { return hasSystemPermission("USER_CREATE"); }
+    public boolean canViewReports() { return hasSystemPermission("REPORT_VIEW"); }
 }

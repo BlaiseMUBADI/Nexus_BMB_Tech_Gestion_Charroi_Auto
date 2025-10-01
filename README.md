@@ -1,70 +1,331 @@
-# Java Dashboard Light and Dark mode
-This dashboard build by using java swing with flatlaf look and feel
+# 🚗 Nexus BMB Tech - Système de Gestion Charroi Auto
+## Application Complète de Gestion de Parc Automobile
 
-### Library use
-- flatlaf-3.2.jar
-- flatlaf-extras-3.2.jar
-- jsvg-1.2.0.jar
-- flatlaf-fonts-roboto-2.137.jar
-- swing-toast-notifications-1.0.1.jar
+[![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
+[![Swing](https://img.shields.io/badge/UI-Java%20Swing-blue.svg)](https://docs.oracle.com/javase/tutorial/uiswing/)
+[![MySQL](https://img.shields.io/badge/Database-MySQL%208.2-blue.svg)](https://www.mysql.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-### Sample code to show form
-``` java
-//  Application class from package raven.application
-//  Parameter as java.awt.Component
+---
 
-Application.showForm(new PanelForm());
+## 📋 **DESCRIPTION**
 
-//  Set menu selection by index and subIndex
+**Nexus BMB Tech Gestion Charroi Auto** est une application complète de gestion de parc automobile développée en Java Swing avec une interface moderne utilisant FlatLaf. Le système permet la gestion complète des véhicules, des utilisateurs, des affectations, de la maintenance et dispose d'un système de sécurité avancé avec gestion granulaire des permissions.
 
+### 🎯 **Fonctionnalités Principales**
+
+- 🚗 **Gestion Véhicules** - Suivi complet du parc automobile
+- 👥 **Gestion Utilisateurs** - Système multi-rôles avec permissions granulaires
+- 📋 **Affectations** - Attribution et suivi des véhicules aux conducteurs
+- 🔧 **Maintenance** - Planification et suivi des entretiens
+- 📊 **Tableaux de Bord** - Statistiques et indicateurs en temps réel
+- 🔐 **Sécurité Avancée** - Authentification et contrôle d'accès complet
+- 📱 **Interface Moderne** - Design responsive avec thèmes clair/sombre
+
+---
+
+## 🏗️ **ARCHITECTURE TECHNIQUE**
+
+### **Technologies Utilisées**
+```
+☕ Java 17+                    - Langage principal
+🎨 Java Swing + FlatLaf        - Interface utilisateur moderne
+🗄️ MySQL 8.2                  - Base de données
+🔧 NetBeans                    - IDE de développement
+📦 Maven/Ant                   - Gestion des dépendances
+```
+
+### **Librairies Principales**
+- `flatlaf-3.4.1.jar` - Look and Feel moderne
+- `flatlaf-extras-3.4.1.jar` - Composants étendus
+- `flatlaf-fonts-roboto-2.137.jar` - Police Roboto
+- `jsvg-1.4.0.jar` - Support SVG
+- `miglayout-core.jar` & `miglayout-swing.jar` - Gestionnaire de layout
+- `swing-toast-notifications-1.0.2.jar` - Notifications
+- `mysql-connector-j-9.3.0.jar` - Connecteur MySQL
+
+---
+
+## 🚀 **INSTALLATION ET DÉMARRAGE**
+
+### **Prérequis**
+- Java 17 ou supérieur
+- MySQL 8.0+
+- NetBeans IDE (recommandé)
+
+### **Installation**
+1. **Cloner le projet**
+   ```bash
+   git clone https://github.com/BlaiseMUBADI/Nexus_BMB_Tech_Gestion_Charroi_Auto.git
+   cd Nexus_BMB_Tech_Gestion_Charroi_Auto
+   ```
+
+2. **Configuration Base de Données**
+   - Créer une base MySQL nommée `bdd_charroi_auto`
+   - Importer le fichier `bdd_charroi_auto.sql`
+   - Configurer la connexion dans `DatabaseConnection.java`
+
+3. **Compilation**
+   ```bash
+   compile.bat    # Windows
+   # ou
+   ant compile    # Multiplateforme
+   ```
+
+4. **Lancement**
+   ```bash
+   run.bat        # Windows
+   # ou
+   ant run        # Multiplateforme
+   ```
+
+### **Identifiants de Test**
+```
+🔴 Super Admin:  ADMIN001 / Admin12345
+🟡 Gestionnaire: GES01 / 123456
+🟢 Conducteur:   COND01 / 123456 (blaise@gmail.com)
+```
+
+---
+
+## 📚 **DOCUMENTATION COMPLÈTE**
+
+### 🔐 **Sécurité et Authentification**
+- **[🔑 Utilisateurs et Permissions](UTILISATEURS_ET_PERMISSIONS.md)** - Guide complet des droits d'accès
+- **[🚀 Création Super Admin](CREATION_SUPER_ADMIN.md)** - Configuration administrateur système
+- **[🔒 Guide Authentification](GUIDE_AUTHENTIFICATION.md)** - Implémentation du système de sécurité
+- **[🛡️ Implémentation Sécurité](GUIDE_IMPLEMENTATION_SECURITE.md)** - Architecture sécurisée
+
+### 🔧 **Guides Techniques**
+- **[⚙️ Migration Projet](GUIDE_MIGRATION_PROJET.md)** - Migration vers nouveau système
+- **[🔗 Intégration Existante](GUIDE_INTEGRATION_EXISTANTE.md)** - Intégration avec systèmes existants
+- **[🔄 Intégration Matricule](RESUME_INTEGRATION_MATRICULE.md)** - Gestion des identifiants
+
+### 🐛 **Résolution de Problèmes**
+- **[🔨 Correction Erreurs Compilation](CORRECTION_ERREURS_COMPILATION.md)** - Solutions aux erreurs communes
+- **[💾 Correction Erreur BDD](CORRECTION_ERREUR_BDD.md)** - Résolution problèmes base de données
+- **[📝 Corrections ENUM InnoDB](CORRECTIONS_ENUM_INNODB.md)** - Optimisations base de données
+
+### 🚀 **Améliorations et Fonctionnalités**
+- **[📊 Système Entretien Complet](SYSTEME_ENTRETIEN_COMPLET.md)** - Module de maintenance avancé
+- **[📋 Amélioration Statut Affectations](AMELIORATION_STATUT_AFFECTATIONS.md)** - Gestion des affectations
+- **[🧹 Nettoyage Projet](NETTOYAGE_PROJET.md)** - Optimisation et maintenance
+
+### 🔌 **Intégrations**
+- **[🔐 Authentification LoginForm](INTEGRATION_AUTHENTIFICATION_LOGINFORM.md)** - Interface de connexion
+
+---
+
+## 🎭 **SYSTÈME DE RÔLES**
+
+```
+🔴 SUPER_ADMIN     → Contrôle total (27 permissions)
+    ↓
+🟠 ADMIN           → Administration (25 permissions)
+    ↓
+🟡 GESTIONNAIRE    → Gestion opérationnelle (14 permissions)
+    ↓
+🟢 CONDUCTEUR_SENIOR → Supervision étendue (6 permissions)
+    ↓
+🔵 CONDUCTEUR      → Accès basique (3 permissions)
+```
+
+---
+
+## 📊 **MODULES PRINCIPAUX**
+
+### 🚗 **Gestion Véhicules**
+- Inventaire complet du parc
+- Suivi kilométrage et état
+- Historique des modifications
+- Géolocalisation et responsabilité
+
+### 👥 **Gestion Utilisateurs**
+- Comptes multi-rôles
+- Permissions granulaires
+- Audit des connexions
+- Sécurité renforcée
+
+### 📋 **Affectations**
+- Attribution véhicule-conducteur
+- Planification temporelle
+- Suivi temps réel
+- Synchronisation automatique
+
+### 🔧 **Maintenance**
+- Planification préventive
+- Suivi curatif
+- Alertes automatiques
+- Historique complet
+
+### 📈 **Reporting**
+- Tableaux de bord dynamiques
+- Statistiques d'utilisation
+- Rapports personnalisables
+- Export des données
+
+---
+
+## 🛡️ **SÉCURITÉ**
+
+### **Fonctionnalités de Sécurité**
+- ✅ Authentification SHA-256
+- ✅ Gestion de sessions sécurisées
+- ✅ Contrôle d'accès basé sur les rôles (RBAC)
+- ✅ Audit complet des actions
+- ✅ Verrouillage automatique des comptes
+- ✅ Permissions granulaires (27 permissions)
+- ✅ Chiffrement des mots de passe
+
+### **Protection des Données**
+- 🔒 Chiffrement des données sensibles
+- 📊 Logs détaillés des accès
+- 🚫 Protection contre les injections SQL
+- ⏰ Expiration automatique des sessions
+
+---
+
+## 📁 **STRUCTURE DU PROJET**
+
+```
+Nexus_BMB_Tech_Gestion_Charroi_Auto/
+├── 📄 README.md                          # Ce fichier
+├── 🗄️ bdd_charroi_auto.sql             # Base de données complète
+├── 📚 Documentation/
+│   ├── UTILISATEURS_ET_PERMISSIONS.md
+│   ├── GUIDE_AUTHENTIFICATION.md
+│   ├── SYSTEME_ENTRETIEN_COMPLET.md
+│   └── [autres guides.md]
+├── 🔧 src/
+│   └── nexus_bmb_soft/
+│       ├── application/               # Interface principale
+│       ├── database/                 # Accès données
+│       ├── models/                   # Modèles de données
+│       ├── security/                 # Système de sécurité
+│       ├── utils/                    # Utilitaires
+│       └── theme/                    # Thèmes et styles
+├── 📦 lib/                           # Librairies externes
+├── 🔨 build/                         # Fichiers compilés
+└── 📋 nbproject/                     # Configuration NetBeans
+```
+
+---
+
+## 🚀 **UTILISATION RAPIDE**
+
+### **Démarrage de l'Application**
+```java
+// Point d'entrée principal
+Application.main(args);
+
+// Affichage d'un formulaire
+Application.showForm(new VehiculeForm());
+
+// Navigation menu
 Application.setSelectedMenu(0, 0);
 ```
-### Menu Items
-``` java
-//  Modify this code in raven.menu.Menu.java
 
-private final String menuItems[][] = {
-    {"~MAIN~"}, //  Menu title
-    {"Dashboard"},
-    {"Email", "Inbox", "Read", "Compost"},
-};
-```
-### Menu Event
-``` java
-menu.addMenuEvent(new MenuEvent() {
-    @Override
-    public void menuSelected(int index, int subIndex, MenuAction action) {
-        if (index == 1) {
-            if (subIndex == 1) {
-                Application.showForm(new FormInbox());
-            } else if (subIndex == 2) {
-                Application.showForm(new FormRead());
-            }
-        } else {
-            action.cancel();
-        }
-    }
-});
+### **Connexion Base de Données**
+```java
+// Configuration dans DatabaseConnection.java
+Connection conn = DatabaseConnection.getConnection();
 ```
 
-### More custom you can apply flatlaf style properties
+### **Authentification**
+```java
+// Connexion utilisateur
+AuthenticationDAO auth = new AuthenticationDAO();
+AuthResult result = auth.authenticate(username, password);
+```
 
-- [Flatlaf github](https://github.com/JFormDesigner/FlatLaf)
-- [Flatlaf doc](https://www.formdev.com/flatlaf/customizing/)
-### Screenshot
-<img src="https://github.com/DJ-Raven/flatlaf-dashboard/assets/58245926/23ab0477-c11e-498d-92f9-37f6bfa944f6" alt="sample 1" width="350"/>
-<img src="https://github.com/DJ-Raven/flatlaf-dashboard/assets/58245926/44d1972b-b29b-4a11-8fdd-be7f27782e5b" alt="sample 1" width="350"/>
-</br>
-<img src="https://github.com/DJ-Raven/flatlaf-dashboard/assets/58245926/71c03d69-4508-43ea-86e6-2cba0c8e1dc8" alt="sample 1" width="350"/>
-<img src="https://github.com/DJ-Raven/flatlaf-dashboard/assets/58245926/fe793459-33b8-47e7-be06-385c3e4dfa37" alt="sample 1" width="350"/>
+---
 
-### Update Note
-- [27-05-2023] Add menu item title use `~` sign around your title name : `{"~YOUR TITLE NAME~"}`
-- [28-05-2023] Update auto scale component and change `Application.mainForm.showForm()` to `Application.showForm()`
-- [29-05-2023] Update popup submenu item removed border and add drop shadow border
-- [31-05-2023] Update add login form
-- [31-05-2023] Update selection menu background and add method selected menu by index and subIndex
-- [17-06-2023] Update add [Toast Notifications](https://github.com/DJ-Raven/swing-toast-notifications.git)
-- [27-06-2023] Update add menu font properties for menu item and menu label `Menu.item.font` and `Menu.label.font`
-- [27-06-2023] Update menu support right to left by enable this [code](https://github.com/DJ-Raven/flatlaf-dashboard/blob/70d08d66fa48f72e55ae873cbc2968e4ac151b57/src/raven/application/Application.java#L87C13-L87C13)
-- [03-10-2023] Update add properties `AccentControl.show` to show and hide accent color toolbar
+## 🤝 **CONTRIBUTION**
+
+### **Comment Contribuer**
+1. 🍴 Fork le projet
+2. 🔧 Créer une branche feature (`git checkout -b feature/AmazingFeature`)
+3. 💾 Commit les changements (`git commit -m 'Add AmazingFeature'`)
+4. 📤 Push la branche (`git push origin feature/AmazingFeature`)
+5. 🔄 Ouvrir une Pull Request
+
+### **Standards de Code**
+- Code en français pour la logique métier
+- Commentaires détaillés
+- Respect des conventions Java
+- Tests unitaires obligatoires
+
+---
+
+## 📝 **CHANGELOG**
+
+### **Version 2.0.0** (Octobre 2025)
+- ✨ Système de sécurité complet avec 27 permissions
+- 🔐 Authentification SHA-256
+- 📊 Module de maintenance avancé
+- 🎨 Interface moderne avec FlatLaf
+- 📱 Thèmes clair/sombre
+
+### **Version 1.0.0** (Septembre 2025)
+- 🚗 Gestion de base des véhicules
+- 👥 Système utilisateurs simple
+- 📋 Affectations basiques
+
+---
+
+## 📞 **SUPPORT**
+
+### **Contact**
+- 👨‍💻 **Développeur**: Blaise MUBADI
+- 📧 **Email**: blaise@gmail.com
+- 🐙 **GitHub**: [@BlaiseMUBADI](https://github.com/BlaiseMUBADI)
+
+### **Signaler un Bug**
+Utilisez le système d'[Issues GitHub](https://github.com/BlaiseMUBADI/Nexus_BMB_Tech_Gestion_Charroi_Auto/issues)
+
+---
+
+## 📄 **LICENCE**
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+## 🌟 **REMERCIEMENTS**
+
+- **FlatLaf** pour le Look and Feel moderne
+- **MySQL** pour la robustesse de la base de données
+- **Java Swing** pour la flexibilité de l'interface
+- La communauté **Open Source** pour l'inspiration
+
+---
+
+## 📊 **STATISTIQUES DU PROJET**
+
+```
+📁 Fichiers de code: 50+
+📄 Documentation: 15 guides
+🔐 Permissions: 27 granulaires
+🎭 Rôles: 5 niveaux
+🗄️ Tables BDD: 12 principales
+⭐ Fonctionnalités: 20+ modules
+```
+
+---
+
+*Dernière mise à jour: 1er octobre 2025*
+*Version: 2.0.0 - Système de Gestion Charroi Auto*
+
+---
+
+## 🎯 **PROCHAINES ÉTAPES**
+
+- [ ] 📱 Application mobile companion
+- [ ] 🌐 Interface web responsive  
+- [ ] 📊 Analytics avancées
+- [ ] 🔔 Notifications push
+- [ ] 🗺️ Intégration GPS temps réel
+- [ ] 📋 Module de facturation
+- [ ] 🚀 API REST complète
+
+**Merci d'utiliser Nexus BMB Tech Gestion Charroi Auto !** ⭐
